@@ -1,5 +1,10 @@
-var testOne = require('./test-one'),
-    testTwo = require('./test-two');
+var $ = require('jquery');
+var socket = io.connect(window.location.hostname);
 
-testOne('testing');
-testTwo('double-test');
+socket.on('status', function (data) {  
+  $('#status').html(data.status);
+});
+
+$('#reset').click(function() {
+  socket.emit('reset');
+});

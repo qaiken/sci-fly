@@ -27,5 +27,8 @@
       "browserify-shim"
     ]
   },
-  "browserify-shim": {}
+  "browserify-shim": {},
+  "dependencies": {
+    "jquery": "^2.1.4"
+  }
 }
