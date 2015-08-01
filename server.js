@@ -3,6 +3,7 @@ var path    = require('path');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var shell = require('shelljs');
 
 app.set('port',process.env.PORT || 8000);
 var staticPath = path.join(__dirname,'client');
@@ -15,9 +16,6 @@ app.get('/', function(req, res) {
 
 // require('./routes/io.js')(app, io);
 
-server.listen(app.get('port'), function() {
-  console.log("Running on port ", app.get('port'));
-});
 
 var status = "All is well.";
 
@@ -28,3 +26,12 @@ io.sockets.on('connection', function (socket) {
     io.sockets.emit('status', { status: status });
   });
 });
+
+server.listen(app.get('port'), function() {
+  console.log("Running on port ", app.get('port'));
+});
+
+if( process.argv[2] === 'dev' ) {
+  shell.exec('cd client && gulp', function(code, output) {
+  });
+}
