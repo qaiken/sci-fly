@@ -1,7 +1,7 @@
 {
-  "name": "myApp",
-  "version": "0.1.0",
-  "description": "Sample app",
+  "name": "phaser-multiplayer-client",
+  "version": "1.0.0",
+  "description": "phaser-multiplayer-client",
   "author": "Quinton Aiken",
   "devDependencies": {
     "browserify": "^10.2.3",
