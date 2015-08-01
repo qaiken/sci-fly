@@ -1,0 +1,31 @@
+{
+  "name": "phaser-multiplayer",
+  "version": "1.0.0",
+  "description": "multiplayer game built with phaser,angular,node,express,socketio",
+  "main": "server.js",
+  "engines": {
+    "node": "0.12.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qaiken/phaser-multiplayer.git"
+  },
+  "keywords": [
+    "multiplayer",
+    "phaser",
+    "websockets"
+  ],
+  "author": "Quinton Aiken <quintonlaiken@gmail.com> (http://quintonlouisaiken.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qaiken/phaser-multiplayer/issues"
+  },
+  "homepage": "https://github.com/qaiken/phaser-multiplayer#readme",
+  "dependencies": {
+    "express": "^4.13.2",
+    "socket.io": "^1.3.6"
+  }
+}
