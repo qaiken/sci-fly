@@ -26,7 +26,7 @@ server.listen(app.get('port'), function() {
 });
 
 // Start Gulp if Dev Environment
-if( process.env.DEV || process.argv[2] === 'dev' ) {
+if( process.env.DEV === 'true' || process.argv[2] === 'dev' ) {
   shell.exec('cd client && gulp', function(code, output) {
   });
 }
