@@ -1,12 +1,19 @@
 var game = angular.module('phaserApp.game');
 var createGame = require('./create_game');
 
-createGame();
-
 game.directive('gameCanvas', ['gameSocket','$injector',function(gameSocket,$injector) {
 
-  var linkFn = function(scope, ele, attrs) {
+  var linkFn = function(scope, el, attrs) {
 
+    var opts = {
+      el: el,
+      scope: scope,
+      socket: gameSocket,
+      players: scope.players,
+      $injector: $injector
+    };
+
+    createGame(opts);
   };
 
   return {
@@ -18,4 +25,5 @@ game.directive('gameCanvas', ['gameSocket','$injector',function(gameSocket,$inje
     template: '<div id="game-canvas"></div>',
     link: linkFn
   };
+
 }]);

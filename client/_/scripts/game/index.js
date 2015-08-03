@@ -5,13 +5,13 @@ game.config(['$stateProvider',function($stateProvider) {
   $stateProvider
     .state('game', {
       url: '/',
-      template: '<game-canvas></game-canvas>',
+      template: '<game-canvas players="gameCntrl.players"></game-canvas>',
       controller: 'GameController as gameCntrl',
       onEnter: ['User', function(User) {
         if( User.getCurrentUser() ) {
           return;
         }
-        
+
         alertify.prompt("Please enter a username.", function (e, input) {
           var userName = input || 'Player';
           var user = {
