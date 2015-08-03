@@ -3,17 +3,19 @@ var createGame = require('./create_game');
 
 createGame();
 
-game.directive('gameCanvas', function($injector) {
+game.directive('gameCanvas', ['gameSocket','$injector',function(gameSocket,$injector) {
 
   var linkFn = function(scope, ele, attrs) {
 
   };
 
   return {
+    restrict: 'E',
+    replace: true,
     scope: {
       players: '='
     },
-    template: '<div id="gameCanvas"></div>',
+    template: '<div id="game-canvas"></div>',
     link: linkFn
   };
-});
+}]);

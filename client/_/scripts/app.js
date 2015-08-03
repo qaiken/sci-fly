@@ -5,10 +5,11 @@ var phaserApp = angular.module('phaserApp',[
   require('./io').name,
   require('./feed').name,
   require('./score_board').name,
-  require('./game').name
+  require('./game').name,
+  require('./user').name
 ]);
 
-phaserApp.config(function($urlRouterProvider) {
+phaserApp.config(['$urlRouterProvider',function($urlRouterProvider) {
   $urlRouterProvider
     .otherwise('/');
-});
+}]);
