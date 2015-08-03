@@ -2,7 +2,9 @@ var preloader = require('./preloader');
 var play = require('./play');
 
 var Game = {
-  States: {}
+  States: {},
+  currentPlayer: null,
+  remotePlayers: []
 };
 
 preloader(Game);

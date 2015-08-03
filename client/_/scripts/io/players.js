@@ -20,23 +20,22 @@ angular.module('phaserApp.ioNetwork')
         return listOfPlayers[i];
       }
     }
-  }
+  };
 
-
-  // Scope listeners
-  $rootScope.$on('game:removePlayer', function(evt, playerData) {
+  $rootScope.$on('game:removePlayer', function(e, playerData) {
     var player = playerById(playerData.id);
     var idx = listOfPlayers.indexOf(player);
 
-    console.log('game:removePlayer players player', playerData.id, _.map(listOfPlayers, 'id'));
     listOfPlayers.splice(idx, 1);
-    $rootScope.$broadcast('newPlayers', listOfPlayers);
+    $rootScope.$broadcast('game:newPlayers', listOfPlayers);
   });
-  // Do we have a new player?
-  $rootScope.$on('game:newPlayer', function(evt, playerData) {
+
+  $rootScope.$on('game:newPlayer', function(e, playerData) {
+
     var player = new Player(playerData);
+
     listOfPlayers.push(player);
-    $rootScope.$broadcast('newPlayers', listOfPlayers);
+    $rootScope.$broadcast('game:newPlayers', listOfPlayers);
   });
 
 }]);

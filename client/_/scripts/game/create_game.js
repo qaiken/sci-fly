@@ -1,44 +1,33 @@
 var phaser = require('phaser');
-var GameData = require('./states');
+var gameData = require('./states');
 
 var createGame = function(opts) {
 
   var el = opts.el;
+  var scope = opts.scope;
+  var socket = opts.socket;
+  var players = opts.players;
+  var $injector = opts.$injector;
+
+  var user  = $injector.get('User');
+  var states  = gameData.States;
+
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, el[0].id);
-  var states  = GameData.States;
 
   game.state.add('Preloader', states.Preloader);
   game.state.add('Play', states.Play);
 
   game.state.start('Preloader');
 
-  // game.mapId = mapId;
-  // game.socket = socket;
-  // game.scope  = scope;
-  // Game.maps           = maps;
-  // Game.remotePlayers = [];
+  game.socket = socket;
+  game.scope  = scope;
 
-  // var user  = injector.get('User'),
-  //     g     = Game;
+  gameData.socket        = socket;
+  gameData.currentPlayer = user.getCurrentUser();
+  gameData.playerName = gameData.currentPlayer.userName;
 
-  // g.socket        = socket;
-  // g.mapId         = mapId;
-  // g.currentPlayer = user.getCurrentUser();
-
-  // // Turn off music
-  // scope.$on('game:toggleMusic', function() {
-  //   game.state.states.Preloader.toggleMusic();
-  // });
-
-  // // Cleanup
-  // scope.$on('$destroy', function() {
-  //   socket.emit('playerLeftMap', {
-  //     playerId: g.sid,
-  //     mapId: g.mapId
-  //   });
-  //   game.destroy();
-  // });
+  console.log(gameData.playerName);
 
   // // Network socket events
   // Game.connected = true;
