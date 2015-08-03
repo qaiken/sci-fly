@@ -7,7 +7,7 @@ game.config(['$stateProvider',function($stateProvider) {
       url: '/',
       template: '<game-canvas players="gameCntrl.players"></game-canvas>',
       controller: 'GameController as gameCntrl',
-      onEnter: ['User', function(User) {
+      onEnter: ['User', 'UUID', function(User, UUID) {
         if( User.getCurrentUser() ) {
           return;
         }
@@ -16,7 +16,8 @@ game.config(['$stateProvider',function($stateProvider) {
           var userName = input || 'Player';
           var user = {
             userName: userName,
-            health: 100
+            health: 100,
+            id: UUID()
           };
 
           User.setCurrentUser(user);
