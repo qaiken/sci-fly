@@ -35,7 +35,7 @@
     ]
   },
   "browser": {
-    "alertify": "./_/scripts/alertify.js"
+    "alertify": "./_/scripts/lib/alertify.js"
   },
   "browserify-shim": {
     "alertify": "alertify"
