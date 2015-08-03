@@ -7,8 +7,7 @@
     "angular": "^1.4.3",
     "angular-socket-io": "^0.7.0",
     "angular-ui-router": "^0.2.15",
-    "jquery": "^2.1.4",
-    "phaser": "^2.4.2"
+    "jquery": "^2.1.4"
   },
   "devDependencies": {
     "browserify": "^10.2.3",
@@ -38,6 +37,7 @@
     "alertify": "./_/scripts/lib/alertify.js"
   },
   "browserify-shim": {
-    "alertify": "alertify"
+    "alertify": "alertify",
+    "phaser": "global:Phaser"
   }
 }
