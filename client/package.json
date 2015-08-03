@@ -38,6 +38,7 @@
   },
   "browserify-shim": {
     "alertify": "alertify",
-    "phaser": "global:Phaser"
+    "phaser": "global:Phaser",
+    "io": "global:io"
   }
 }
