@@ -11,7 +11,13 @@ var play = function(GameData) {
 
       this.initEmitter();
 
-      this.initMainPlayer();
+      this.mainPlayer = this.initPlayer({
+        id: this.game.socket.id
+      });
+
+      GameData.mainPlayer = this.mainPlayer;
+      this.camera.follow(this.mainPlayer);
+      this.game.socket.emit('newPlayer');
 
       this.bullets = this.add.group();
       this.remoteBullets = this.add.group();
@@ -31,7 +37,7 @@ var play = function(GameData) {
         var allPlayers = data.allPlayers;
         var newPlayers = [];
         var player;
-        
+
         for (var i = 0; i < allPlayers.length; i++) {
           player = allPlayers[i];
 
@@ -64,20 +70,14 @@ var play = function(GameData) {
       this.emitter.gravity = 150;
       this.emitter.bounce.setTo(0.5, 0.5);
     },
-    initMainPlayer: function() {
-      this.mainPlayer = this.add.sprite(300, 90, 'phaser');
-      this.mainPlayer.health = 100;
-      this.mainPlayer.anchor.set(0.5);
+    initPlayer: function(opts) {
+      var player = this.add.sprite(300, 90, 'phaser');
+      player.health = 100;
+      player.anchor.set(0.5);
+      player.id = opts.id;
+      this.physics.enable(player);
 
-      this.mainPlayer.id = this.game.socket.id;
-
-      GameData.mainPlayer = this.mainPlayer;
-
-      this.physics.enable(this.mainPlayer);
-
-      this.camera.follow(this.mainPlayer);
-
-      this.game.socket.emit('newPlayer');
+      return player;
     },
     initBullets: function(bulletGroup) {
 
@@ -167,11 +167,23 @@ var play = function(GameData) {
         this.fireBullet(player,bulletGroup);
       }
     },
+    addPlayers: function() {
+      var player, playerToAdd;
+      while ( GameData.toAdd.length !== 0 ) {
+        var player = GameData.toAdd.shift();
+        if (!player) {
+          return;
+        }
+        playerToAdd = this.initPlayer(player.id);
+        GameData.remotePlayers.push(playerToAdd);
+      }
+    },
     update: function() {
       this.checkWallCollisions();
 
-      this.movePlayer(this.mainPlayer);
+      this.addPlayers();
 
+      this.movePlayer(this.mainPlayer);
       this.isFiring(this.mainPlayer,this.bullets);
     }
   };
