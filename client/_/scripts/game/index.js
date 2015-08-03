@@ -7,7 +7,7 @@ game.config(['$stateProvider',function($stateProvider) {
       url: '/',
       template: '<game-canvas players="gameCntrl.players"></game-canvas>',
       controller: 'GameController as gameCntrl'
-    })
+    });
 }]);
 
 require('./game_controller');

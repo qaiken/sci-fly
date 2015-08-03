@@ -11,6 +11,7 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$inje
 
     alertify.prompt("Please enter a username.", function (e, input) {
       var userName = input || 'Player';
+
       var user = {
         userName: userName,
         health: 100,
@@ -28,9 +29,13 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$inje
 
   var linkFn = function(scope, el, attrs) {
 
+    gameSocket.on('connected', function(opts) {
+      gameSocket.id = opts.id;
+    });
+
     var opts = {
       el: el,
-      scope: scope.gamectrl,
+      scope: scope,
       socket: gameSocket,
       players: scope.gamectrl.players,
       $injector: $injector

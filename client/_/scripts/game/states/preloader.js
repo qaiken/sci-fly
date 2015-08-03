@@ -1,9 +1,9 @@
-var preloader = function(Game) {
+var preloader = function(GameData) {
 
-  Game.States.Preloader = function(game) {
+  GameData.States.Preloader = function(game) {
   };
 
-  Game.States.Preloader.prototype = {
+  GameData.States.Preloader.prototype = {
     preload: function() {
       this.load.tilemap('level3', 'tilemaps/cybernoid.json', null, Phaser.Tilemap.TILED_JSON);
       

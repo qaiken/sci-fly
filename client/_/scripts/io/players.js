@@ -31,7 +31,6 @@ angular.module('phaserApp.ioNetwork')
   });
 
   $rootScope.$on('game:newPlayer', function(e, playerData) {
-
     var player = new Player(playerData);
 
     listOfPlayers.push(player);

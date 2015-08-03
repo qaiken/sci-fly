@@ -13,12 +13,12 @@ var createGame = function(opts) {
   var states  = gameData.States;
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, el[0].id);
+  
+  game.socket = socket;
+  game.scope  = scope;
 
   game.state.add('Preloader', states.Preloader);
   game.state.add('Play', states.Play);
-
-  game.socket = socket;
-  game.scope  = scope;
 
   gameData.socket = socket;
   gameData.currentPlayer = user.getCurrentUser();
