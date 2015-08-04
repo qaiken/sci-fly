@@ -13,7 +13,6 @@ var preloader = function(GameData) {
       this.load.image('bullet', 'img/bullet.png');
 
       this.load.spritesheet('kaboom', 'img/explode.png', 128, 128);
-
     },
     create: function() {
       // so that game still updates on lost focus

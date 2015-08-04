@@ -31,6 +31,8 @@ var play = function(GameData) {
       this.initBullets(this.bullets);
       this.initBullets(this.remoteBullets);
 
+      this.initExplosions();
+
       this.cursors = this.input.keyboard.createCursorKeys();
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
@@ -44,6 +46,20 @@ var play = function(GameData) {
       this.remoteBulletsShotSocketUpdate();
 
       this.playerScoredSocketUpdate();
+    },
+    initExplosions: function() {
+      this.explosions = this.add.group();
+      this.explosions.createMultiple(30, 'kaboom');
+      this.explosions.forEach(function(explosion) {
+        explosion.anchor.x = 0.5;
+        explosion.anchor.y = 0.5;
+        explosion.animations.add('kaboom');
+      });
+    },
+    playExplosion: function(player) {
+      var explosion = this.explosions.getFirstExists(false);
+      explosion.reset(player.body.x, player.body.y);
+      explosion.play('kaboom', 30, false, true);
     },
     generatePosition: function() {
       var positions = [{x:300, y:90}, {x:550, y:180}];
@@ -225,6 +241,7 @@ var play = function(GameData) {
     },
     damagePlayer: function(mainPlayer,remoteBullet) {
       this.game.scope.$emit('game:healthChange', mainPlayer.health-= 20);
+      this.playExplosion(mainPlayer);
       if( mainPlayer.health === 0 ) {
         this.game.socket.emit('playerScored',remoteBullet.id);
         this.killPlayer(mainPlayer);
@@ -232,7 +249,11 @@ var play = function(GameData) {
       remoteBullet.kill();
     },
     shotRemotePlayer: function(remotePlayer,bullet) {
+      var explosion;
+
       bullet.kill();
+      
+      this.playExplosion(remotePlayer);
     },
     movePlayer: function(player) {
       player.body.velocity.x = 0;
