@@ -46,7 +46,7 @@ var handleIO = function(app,io) {
   function onPlayerScored(id) {
     var player = getPlayerById(id);
 
-    ++player.points;
+    ++player.kills;
     game.io.sockets.emit('playerScored',player);
   }
 

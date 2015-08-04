@@ -18,7 +18,7 @@ var Player = function(opts) {
 
   this.timestamp = 0;
   this.health = 100;
-  this.points = 0;
+  this.kills = 0;
   this.lastShot = {};
 };
 

@@ -15,7 +15,8 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'gameSocket', '$injector', f
       var user = {
         userName: userName,
         health: 100,
-        id: gameSocket.id
+        id: gameSocket.id,
+        kills: 0
       };
 
       User.setCurrentUser(user);

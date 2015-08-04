@@ -51,9 +51,11 @@ var play = function(GameData) {
       return positions[i];
     },
     playerScoredSocketUpdate: function() {
-      this.game.socket.on('playerScored',function(playerData) {
-        if( playerData.id === GameData.mainPlayer ) {
-          this.game.scope.$emit('game:playerScored');
+      var game = this.game;
+
+      game.socket.on('playerScored',function(playerData) {
+        if( playerData.id === GameData.mainPlayer.id ) {
+          game.scope.$emit('game:playerScored');
         }
       });
     },
