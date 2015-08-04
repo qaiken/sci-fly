@@ -49,7 +49,7 @@ var handleIO = function(app,io) {
     var player = getPlayerById(id);
     game.players.splice(game.players.indexOf(player),1);
     // send to all clients
-    game.io.sockets.emit('kill', player);  
+    game.io.sockets.emit('kill', player);
   }
 
   function onShotBullet(bulletData) {
@@ -81,11 +81,15 @@ var handleIO = function(app,io) {
     });
   }
 
-  function onNewPlayer(id) {
+  function onNewPlayer(opts) {
+    // mainPlayer
     var player = getPlayerById(this.id);
+    player.x = opts.x;
+    player.y = opts.y;
 
+    // remote player
     if (!player) {
-      player = new Player({ id: id });
+      player = new Player(opts);
       game.players.push(player);
     }
 

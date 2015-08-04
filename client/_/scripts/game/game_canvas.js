@@ -14,7 +14,6 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$inje
 
       var user = {
         userName: userName,
-        health: 100,
         id: UUID()
       };
 
@@ -25,7 +24,7 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$inje
       cb();
 
     },'');
-  }
+  };
 
   var linkFn = function(scope, el, attrs) {
 

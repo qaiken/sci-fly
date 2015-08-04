@@ -1,16 +1,15 @@
 var phaser = require('phaser');
-var gameData = require('./states');
+var GameData = require('./states');
 
 var createGame = function(opts) {
 
   var el = opts.el;
   var scope = opts.scope;
   var socket = opts.socket;
-  var players = opts.players;
   var $injector = opts.$injector;
 
   var user  = $injector.get('User');
-  var states  = gameData.States;
+  var states  = GameData.States;
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, el[0].id);
   
@@ -20,13 +19,14 @@ var createGame = function(opts) {
   game.state.add('Preloader', states.Preloader);
   game.state.add('Play', states.Play);
 
-  gameData.socket = socket;
-  gameData.currentPlayer = user.getCurrentUser();
-  gameData.playerName = gameData.currentPlayer.userName;
 
-  gameData.socket.emit('setPlayerName', { name: gameData.playerName });
+  GameData.socket = socket;
+  GameData.currentPlayer = user.getCurrentUser();
+  GameData.playerName = GameData.currentPlayer.userName;
 
-  gameData.socket.on('playerDetailsReceived', function(data) {
+  GameData.socket.emit('setPlayerName', { name: GameData.playerName });
+
+  GameData.socket.on('playerDetailsReceived', function(data) {
     game.state.start('Preloader');
   });
 

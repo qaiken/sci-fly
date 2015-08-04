@@ -16,6 +16,8 @@ var preloader = function(GameData) {
 
     },
     create: function() {
+      // so that game still updates on lost focus
+      // (needed for socketIO to continually update)
       this.game.stage.disableVisibilityChange = true;
       this.state.start('Play');
     }

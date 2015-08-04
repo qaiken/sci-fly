@@ -9,13 +9,19 @@ var play = function(GameData) {
 
       this.initWorld();
 
-      this.mainPlayer = this.initPlayer({
-        id: this.game.socket.id
-      });
+      var startPos = this.generatePosition();
+
+      var config = {
+        id: this.game.socket.id,
+        x: startPos.x,
+        y: startPos.y
+      };
+
+      this.mainPlayer = this.initPlayer(config);
+      this.game.socket.emit('newPlayer',config);
 
       GameData.mainPlayer = this.mainPlayer;
       this.camera.follow(this.mainPlayer);
-      this.game.socket.emit('newPlayer');
 
       this.bullets = this.add.group();
       this.bulletTime = 0;
@@ -34,6 +40,11 @@ var play = function(GameData) {
 
       this.remoteBulletsShotSocketUpdate();
 
+    },
+    generatePosition: function() {
+      var positions = [{x:300, y:90}, {x:550, y:180}];
+      var i = Math.floor(Math.random()*positions.length);
+      return positions[i];
     },
     remotePlayerDisconnectOrKill: function() {
       this.game.socket.on('disconnect',function(playerData) {
@@ -76,13 +87,19 @@ var play = function(GameData) {
         for (var i = 0; i < allPlayers.length; i++) {
           playerData = allPlayers[i];
 
+          // skip if its ourself (the main player) 
+          // or we already have them in our gameData.remotePlayers array
           if ( playerData.id === GameData.mainPlayer.id || GameData.getRemotePlayerById(playerData.id) ) {
             continue;
           }
 
+          console.log('player',playerData);
+
           GameData.toAdd.push(playerData);
           game.scope.$emit('game:newPlayer', playerData);
         }
+
+        console.log('all',allPlayers);
       });
     },
     playerDataSocketUpdate: function() {
@@ -180,13 +197,20 @@ var play = function(GameData) {
       this.game.socket.emit('playerKilled',mainPlayer.id);
       mainPlayer.kill();
 
-      this.mainPlayer = this.initPlayer({
-        id: this.game.socket.id
-      });
+      var startPos = this.generatePosition();
+
+      var config = {
+        id: this.game.socket.id,
+        x: startPos.x,
+        y: startPos.y
+      };
+
+      this.mainPlayer = this.initPlayer(config);
+      this.game.socket.emit('newPlayer',config);
+
+      GameData.mainPlayer = this.mainPlayer;
 
       this.camera.follow(this.mainPlayer);
-
-      this.game.socket.emit('newPlayer', this.game.socket.id);
     },
     damagePlayer: function(mainPlayer,bullet) {
       if( (mainPlayer.health-= 20) < 0 ) {
@@ -236,8 +260,6 @@ var play = function(GameData) {
       if (!bullet) {
         return;
       }
-
-      console.log(remote);
 
       if( player.orientation === 'left' ) {
         // flip bullet sprite
