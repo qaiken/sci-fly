@@ -157,7 +157,6 @@ var play = function(GameData) {
       var player = this.add.sprite(x, y, 'phaser');
       player.orientation = 'right';
       player.health = 100;
-      player.anchor.set(0.5);
       player.id = id;
       this.physics.enable(player);
 
@@ -262,10 +261,10 @@ var play = function(GameData) {
       if( player.orientation === 'left' ) {
         // flip bullet sprite
         bullet.scale.x = -1;
-        bullet.reset(player.x - 8, player.y);
+        bullet.reset(player.x - 8, player.y + 8);
         bullet.body.velocity.x = -400;
       } else if( player.orientation === 'right' ) {
-        bullet.reset(player.x + 8, player.y);
+        bullet.reset(player.x + 8, player.y + 8);
         bullet.body.velocity.x = 400;
       }
 
