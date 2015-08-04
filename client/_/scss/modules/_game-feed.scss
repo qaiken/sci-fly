@@ -1,0 +1,29 @@
+//=================================
+// GAME FEED
+//=================================
+
+#game-feed {
+  width: 22%;
+  padding: 0 em(20px);
+  float: right;
+  text-transform: uppercase;
+}
+
+.user {
+  margin: 0 0 em(20px) 0;
+  text-align: center;
+  h2 {
+    font-size: em(20px);
+    margin: 0 0 em(5px,20px) 0;
+    text-decoration: underline;
+  }
+}
+
+.players {
+  h3 {
+    text-decoration: underline;
+  }
+  ul {
+    list-style-type: none;
+  }
+}

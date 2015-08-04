@@ -6,7 +6,7 @@
 // @font-face & @import
 //---------------------------------
 
-// @import url("http://hello.myfonts.net/count/2b0ad4");
+@import url(http://fonts.googleapis.com/css?family=Roboto);
 
 // @font-face {
 // 	font-family: 'ClarendonBT-Roman';
@@ -25,6 +25,8 @@
 $font-regular: 'Regular Font Family Name', sans-serif;
 $font-light: 'Light Font Family Name', sans-serif;
 $font-bold: 'Bold Font Family Name', sans-serif;
+
+$roboto: 'Roboto', sans-serif;
 
 // Variables best utilized for font services with family grouping.
 $font-name-one: 'Font Name One', sans-serif;
