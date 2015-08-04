@@ -18,6 +18,7 @@ var play = function(GameData) {
       this.game.socket.emit('newPlayer');
 
       this.bullets = this.add.group();
+      this.bulletTime = 0;
       this.remoteBullets = this.add.group();
 
       this.initBullets(this.bullets);
@@ -139,6 +140,7 @@ var play = function(GameData) {
       var id = opts.id;
 
       var player = this.add.sprite(x, y, 'phaser');
+      player.orientation = 'right';
       player.health = 100;
       player.anchor.set(0.5);
       player.id = id;
@@ -181,6 +183,8 @@ var play = function(GameData) {
       this.mainPlayer = this.initPlayer({
         id: this.game.socket.id
       });
+
+      this.camera.follow(this.mainPlayer);
 
       this.game.socket.emit('newPlayer', this.game.socket.id);
     },
@@ -232,6 +236,8 @@ var play = function(GameData) {
       if (!bullet) {
         return;
       }
+
+      console.log(remote);
 
       if( player.orientation === 'left' ) {
         // flip bullet sprite
