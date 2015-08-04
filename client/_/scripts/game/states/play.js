@@ -66,7 +66,7 @@ var play = function(GameData) {
     generatePosition: function() {
       var positions = [{x:2000, y:400}, {x:1550, y:400}, {x:1150, y:250}, {x:1350, y:100}, {x:1150, y:100}, {x:850, y:150}, {x:850, y:400}, {x:500, y:600}, {x:100, y:600}, {x:400, y:300},{x:300, y:90}];
       var i = Math.floor(Math.random()*positions.length);
-      return positions[0];
+      return positions[i];
     },
     playerScoredSocketUpdate: function() {
       var game = this.game;
