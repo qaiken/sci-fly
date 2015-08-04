@@ -23,15 +23,35 @@ var handleIO = function(app,io) {
 
       game.players.push(player);
 
-      // socket.on('updatePlayer', onUpdatePlayer);
-      // socket.on('playerLeave', onPlayerLeave);
       // socket.on('shotBullet', onShotBullet);
       // socket.on('playerHit', onPlayerHit);
+      socket.on('updatePlayer', onUpdatePlayer);
       socket.on('newPlayer', onNewPlayer);
       socket.on('setPlayerName', onSetPlayerName);
-
+      socket.on('disconnect', function(e) {
+        onDisconnect.call(this,player);
+      });
     });
+  }
 
+  function onDisconnect(player) {
+    game.players.splice(game.players.indexOf(player),1);
+    game.io.emit('disconnect',player);
+  }
+
+  function onUpdatePlayer(playerData) {
+    var player = game.getPlayerById(this.id);
+
+    if (!player) {
+      console.log("Player not found: ", this.id);
+      return;
+    }
+
+    player.recordUpdate(playerData);
+
+    game.io.sockets.emit('updatePlayers', {
+      players: game.players
+    });
   }
 
   function onNewPlayer(player) {
@@ -44,7 +64,7 @@ var handleIO = function(app,io) {
     }
 
     // send back to all clients except the socket that
-    // fired the chat message event
+    // fired the update event
     this.broadcast.emit('gameUpdated:add', {
       player: player.serialize(),
       allPlayers: game.players

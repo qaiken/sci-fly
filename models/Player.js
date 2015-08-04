@@ -2,9 +2,11 @@ var Player = function(opts) {
   this.id = opts.id;
   this.name = opts.name || null;
 
-  this.xRel = this.x = 0;
-  this.yRel = this.y = 0;
-  this.rotation = 0;
+  this.velocity = {
+    x: 0,
+    y: 0
+  };
+
   this.lastUpdate = 0;
   this.health = 100;
   this.points = 0;
@@ -12,10 +14,8 @@ var Player = function(opts) {
 };
 
 Player.prototype.recordUpdate = function(data) {
-  this.x = data.x;
-  this.y = data.y;
-  this.xRel = data.xRel;
-  this.yRel = data.yRel;
+  this.velocity.x = data.velocity.x;
+  this.velocity.y = data.velocity.y;
   this.health = data.health;
   this.lastUpdate = data.timestamp;
 };

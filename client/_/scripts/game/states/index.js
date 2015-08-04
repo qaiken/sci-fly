@@ -6,6 +6,8 @@ var GameData = {
   mainPlayer: null,
   remotePlayers: [],
   toAdd: [],
+  width: 800,
+  height: 600,
   getRemotePlayerById: function(id) {
     for (var i = 0; i < this.remotePlayers.length; i++) {
       if ( this.remotePlayers[i].id === id ) {
@@ -13,7 +15,7 @@ var GameData = {
       }
     }
     return false;
-  },
+  }
 };
 
 preloader(GameData);

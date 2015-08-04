@@ -28,9 +28,12 @@ var play = function(GameData) {
       this.cursors = this.input.keyboard.createCursorKeys();
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-      this.playerAddedSocketUpdate();
+      this.remotePlayerAddedSocketUpdate();
+      this.playerMovementSocketUpdates = this.game.time.events.add(100,this.playerMovementSocketUpdate.bind(this));
+      this.remotePlayersMovementSocketUpdate();
+
     },
-    playerAddedSocketUpdate: function() {
+    remotePlayerAddedSocketUpdate: function() {
       var game = this.game;
 
       game.socket.on('gameUpdated:add', function(data) {
@@ -42,13 +45,47 @@ var play = function(GameData) {
           player = allPlayers[i];
 
           if ( player.id === GameData.mainPlayer.id || GameData.getRemotePlayerById(player.id) ) {
-            break;
+            continue;
           }
 
           GameData.toAdd.push(player);
           game.scope.$emit('game:newPlayer', player);
         }
       });
+    },
+    playerMovementSocketUpdate: function() {
+      this.game.socket.emit('updatePlayer', {
+        velocity: {
+          x: this.mainPlayer.body.velocity.x,
+          y: this.mainPlayer.body.velocity.y
+        },
+        health: this.mainPlayer.health,
+        timestamp: new Date().getTime()
+      });
+      this.playerMovementSocketUpdates = this.game.time.events.add(100,this.playerMovementSocketUpdate.bind(this));
+    },
+    updatePlayerPositionfromServer: function(player,serverData) {
+      player.body.velocity.x = serverData.velocity.x;
+      player.body.velocity.y = serverData.velocity.y;
+    },
+    remotePlayersMovementSocketUpdate: function() {
+
+      this.game.socket.on('updatePlayers', function(playersData) {
+        var players = playersData.players;
+        var player, playerData;
+
+        for (var i = 0; i < players.length; i++) {
+          playerData = players[i];
+
+          // don't want to include ourself
+          if ( playerData.id !== GameData.socket.id ) {
+            player = GameData.getRemotePlayerById(playerData.id);
+            if (player) {
+              this.updatePlayerPositionfromServer(player,playerData);
+            }
+          }
+        }
+      }.bind(this));
     },
     initWorld: function() {
       this.map = this.add.tilemap('level3');
@@ -71,10 +108,14 @@ var play = function(GameData) {
       this.emitter.bounce.setTo(0.5, 0.5);
     },
     initPlayer: function(opts) {
-      var player = this.add.sprite(300, 90, 'phaser');
+      var x = opts.x || 300;
+      var y = opts.y || 90;
+      var id = opts.id;
+
+      var player = this.add.sprite(x, y, 'phaser');
       player.health = 100;
       player.anchor.set(0.5);
-      player.id = opts.id;
+      player.id = id;
       this.physics.enable(player);
 
       return player;
@@ -174,7 +215,7 @@ var play = function(GameData) {
         if (!player) {
           return;
         }
-        playerToAdd = this.initPlayer(player.id);
+        playerToAdd = this.initPlayer(player);
         GameData.remotePlayers.push(playerToAdd);
       }
     },

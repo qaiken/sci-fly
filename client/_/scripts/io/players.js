@@ -13,7 +13,7 @@ angular.module('phaserApp.ioNetwork')
   var players = this;
   var listOfPlayers = [];
 
-  var playerById = function(id) {
+  var getPlayerById = function(id) {
     var player;
     for (var i = 0; i < listOfPlayers.length; i++) {
       if (listOfPlayers[i].id === id) {
@@ -23,7 +23,7 @@ angular.module('phaserApp.ioNetwork')
   };
 
   $rootScope.$on('game:removePlayer', function(e, playerData) {
-    var player = playerById(playerData.id);
+    var player = getPlayerById(playerData.id);
     var idx = listOfPlayers.indexOf(player);
 
     listOfPlayers.splice(idx, 1);
