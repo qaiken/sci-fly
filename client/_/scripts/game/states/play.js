@@ -27,7 +27,7 @@ var play = function(GameData) {
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       this.remotePlayerAddedSocketUpdate();
-      this.playerDataSocketUpdates = this.game.time.events.add(20,this.playerDataSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(0,this.playerDataSocketUpdate.bind(this));
       this.remotePlayersMovementSocketUpdate();
       this.remotePlayerDisconnectOrKill();
 
@@ -96,7 +96,7 @@ var play = function(GameData) {
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
-      this.playerDataSocketUpdates = this.game.time.events.add(20,this.playerDataSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(0,this.playerDataSocketUpdate.bind(this));
     },
     updatePlayerDatafromServer: function(player,serverData) {
       player.body.velocity.x = serverData.velocity.x;
@@ -185,7 +185,7 @@ var play = function(GameData) {
       this.game.socket.emit('newPlayer', this.game.socket.id);
     },
     damagePlayer: function(mainPlayer,bullet) {
-      if( (mainPlayer.health-= 5) < 0 ) {
+      if( (mainPlayer.health-= 20) < 0 ) {
         this.killPlayer(mainPlayer);
       }
       bullet.kill();
