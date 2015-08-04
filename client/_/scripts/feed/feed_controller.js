@@ -5,15 +5,17 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
   var feedCtrl = this;
 
   feedCtrl.getUserName = function() {
-    return JSON.parse(localStorage.getItem('currentUser')).userName;
+    return JSON.parse(localStorage.getItem('currentUser')).userName || '';
   }
 
   feedCtrl.getHealth = function() {
-    return JSON.parse(localStorage.getItem('currentUser')).health;
+    return JSON.parse(localStorage.getItem('currentUser')).health || '';
   }
   
-  feedCtrl.health = feedCtrl.getHealth();
-  feedCtrl.userName = feedCtrl.getUserName();
+  $rootScope.$on('game:newPlayer', function(player) {
+    feedCtrl.userName = feedCtrl.getUserName();
+    feedCtrl.health = feedCtrl.getHealth();
+  });
 
   $rootScope.$on('game:healthChange',function(e,health) {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -21,7 +23,6 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
 
     localStorage.setItem('currentUser',JSON.stringify(currentUser));
     feedCtrl.health = feedCtrl.getHealth();
-
   });
 
 }]);
