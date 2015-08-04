@@ -9,8 +9,6 @@ var play = function(GameData) {
 
       this.initWorld();
 
-      this.initEmitter();
-
       this.mainPlayer = this.initPlayer({
         id: this.game.socket.id
       });
@@ -106,15 +104,6 @@ var play = function(GameData) {
 
       this.layer.resizeWorld();
     },
-    initEmitter: function() {
-      this.emitter = this.add.emitter(0, 0, 200);
-
-      this.emitter.makeParticles('chunk');
-      this.emitter.minRotation = 0;
-      this.emitter.maxRotation = 0;
-      this.emitter.gravity = 150;
-      this.emitter.bounce.setTo(0.5, 0.5);
-    },
     initPlayer: function(opts) {
       var x = opts.x || 300;
       var y = opts.y || 90;
@@ -139,14 +128,8 @@ var play = function(GameData) {
       bulletGroup.setAll('checkWorldBounds', true);
 
     },
-    particleBurst: function(player) {
-      this.emitter.x = player.x;
-      this.emitter.y = player.y;
-      this.emitter.start(true, 2000, null, 1);
-    },
     checkWallCollisions: function() {
       this.physics.arcade.collide(this.mainPlayer, this.layer);
-      this.physics.arcade.collide(this.emitter, this.layer);
 
       this.physics.arcade.collide(GameData.remotePlayers, this.layer);
       
@@ -164,20 +147,16 @@ var play = function(GameData) {
 
       if (this.cursors.up.isDown) {
         player.body.velocity.y = -200;
-        this.particleBurst(player);
       } else if (this.cursors.down.isDown) {
         player.body.velocity.y = 200;
-        this.particleBurst(player);
       }
 
       if (this.cursors.left.isDown) {
         player.body.velocity.x = -200;
         player.scale.x = -1;
-        this.particleBurst(player);
       } else if (this.cursors.right.isDown) {
         player.body.velocity.x = 200;
         player.scale.x = 1;
-        this.particleBurst(player);
       }
     },
     fireBullet: function(player,bulletGroup) {
