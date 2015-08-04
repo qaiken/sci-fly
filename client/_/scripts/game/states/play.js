@@ -202,16 +202,16 @@ var play = function(GameData) {
       player.body.velocity.y = 0;
 
       if (this.cursors.up.isDown) {
-        player.body.velocity.y = -200;
+        player.body.velocity.y = -100;
       } else if (this.cursors.down.isDown) {
-        player.body.velocity.y = 200;
+        player.body.velocity.y = 100;
       }
 
       if (this.cursors.left.isDown) {
-        player.body.velocity.x = -200;
+        player.body.velocity.x = -100;
         player.scale.x = -1;
       } else if (this.cursors.right.isDown) {
-        player.body.velocity.x = 200;
+        player.body.velocity.x = 100;
         player.scale.x = 1;
       }
     },
