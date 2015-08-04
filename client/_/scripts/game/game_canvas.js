@@ -1,7 +1,7 @@
 var game = angular.module('phaserApp.game');
 var createGame = require('./create_game');
 
-game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$injector', function($rootScope, User, UUID, gameSocket, $injector) {
+game.directive('gameCanvas', ['$rootScope', 'User', 'gameSocket', '$injector', function($rootScope, User, gameSocket, $injector) {
 
   var newUser = function(cb) {
     if( User.getCurrentUser() ) {
@@ -14,7 +14,8 @@ game.directive('gameCanvas', ['$rootScope', 'User', 'UUID', 'gameSocket', '$inje
 
       var user = {
         userName: userName,
-        id: UUID()
+        health: 100,
+        id: gameSocket.id
       };
 
       User.setCurrentUser(user);

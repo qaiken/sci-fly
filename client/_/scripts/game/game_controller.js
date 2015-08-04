@@ -5,8 +5,10 @@ game.controller('GameController', ['$scope', 'players', function($scope) {
 
   gameCtrl.players = [];
 
-  $scope.$on('game:newPlayers', function(player) {
-    gameCtrl.players.push(player);
+  $scope.$on('game:newPlayer', function(player) {
+    if( gameCtrl.players.indexOf(player) === -1 ) {
+      gameCtrl.players.push(player);
+    }
   });
 
 }]);

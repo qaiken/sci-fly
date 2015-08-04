@@ -30,16 +30,4 @@ Player.prototype.recordShot = function(data) {
   this.lastShot = data;
 };
 
-Player.prototype.addShotPoints = function(data) {
-  this.points += 10;
-};
-
-Player.prototype.wasHit = function() {
-  this.health -= 10;
-};
-
-Player.prototype.isAlive = function() {
-  return this.health > 0;
-};
-
 module.exports = Player;

@@ -31,8 +31,9 @@ var handleIO = function(app,io) {
       });
 
       socket.on('shotBullet', onShotBullet);
-      socket.on('playerHit', onPlayerHit);
       socket.on('playerKilled',onPlayerKilled);
+
+      socket.on('playerScored',onPlayerScored);
     });
   }
 
@@ -42,7 +43,11 @@ var handleIO = function(app,io) {
     game.io.sockets.emit('disconnect',player);
   }
 
-  function onPlayerHit(player) {
+  function onPlayerScored(id) {
+    var player = getPlayerById(id);
+
+    ++player.points;
+    game.io.sockets.emit('playerScored',player);
   }
 
   function onPlayerKilled(id) {
@@ -98,16 +103,6 @@ var handleIO = function(app,io) {
       player: player,
       allPlayers: game.players
     });
-
-    // this.emit('gameUpdated:add', {
-    //   map: data.mapId,
-    //   allPlayers: g.maps[data.mapId].players
-    // });
-
-    // g.io.emit('global:newPlayer', {
-    //   player: player.serialize(),
-    //   map: data.mapId
-    // });
   }
 
   function onSetPlayerName(opts) {

@@ -19,6 +19,7 @@ var play = function(GameData) {
 
       this.mainPlayer = this.initPlayer(config);
       this.game.socket.emit('newPlayer',config);
+      this.game.scope.$emit('game:newPlayer', config);
 
       GameData.mainPlayer = this.mainPlayer;
       this.camera.follow(this.mainPlayer);
@@ -40,11 +41,21 @@ var play = function(GameData) {
 
       this.remoteBulletsShotSocketUpdate();
 
+      this.remoteBulletsShotSocketUpdate();
+
+      this.playerScoredSocketUpdate();
     },
     generatePosition: function() {
       var positions = [{x:300, y:90}, {x:550, y:180}];
       var i = Math.floor(Math.random()*positions.length);
       return positions[i];
+    },
+    playerScoredSocketUpdate: function() {
+      this.game.socket.on('playerScored',function(playerData) {
+        if( playerData.id === GameData.mainPlayer ) {
+          this.game.scope.$emit('game:playerScored');
+        }
+      });
     },
     remotePlayerDisconnectOrKill: function() {
       this.game.socket.on('disconnect',function(playerData) {
@@ -55,6 +66,7 @@ var play = function(GameData) {
         player.kill();
         GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
       });
+
       this.game.socket.on('kill',function(playerData) {
         var player = GameData.getRemotePlayerById(playerData.id);
         if(!player) {
@@ -72,7 +84,7 @@ var play = function(GameData) {
           return;
         }
 
-        this.fireBullet(player,this.remoteBullets,true);
+        this.fireBullet(player,this.remoteBullets,bulletData.id);
       }.bind(this));
     },
     remotePlayerAddedSocketUpdate: function() {
@@ -204,16 +216,18 @@ var play = function(GameData) {
 
       this.mainPlayer = this.initPlayer(config);
       this.game.socket.emit('newPlayer',config);
-
       GameData.mainPlayer = this.mainPlayer;
+      this.game.scope.$emit('game:healthChange', this.mainPlayer.health);
 
       this.camera.follow(this.mainPlayer);
     },
-    damagePlayer: function(mainPlayer,bullet) {
-      if( (mainPlayer.health-= 20) < 0 ) {
+    damagePlayer: function(mainPlayer,remoteBullet) {
+      this.game.scope.$emit('game:healthChange', mainPlayer.health-= 20);
+      if( mainPlayer.health === 0 ) {
+        this.game.socket.emit('playerScored',remoteBullet.id);
         this.killPlayer(mainPlayer);
       }
-      bullet.kill();
+      remoteBullet.kill();
     },
     shotRemotePlayer: function(remotePlayer,bullet) {
       bullet.kill();
@@ -236,7 +250,7 @@ var play = function(GameData) {
         player.scale.x = 1;
       }
     },
-    fireBullet: function(player,bulletGroup,remote) {
+    fireBullet: function(player,bulletGroup,remoteID) {
 
       var facing = player.body.facing;
       var bullet;
@@ -270,7 +284,8 @@ var play = function(GameData) {
 
       this.bulletTime = this.time.now + 200;
 
-      if(remote) {
+      if(remoteID) {
+        bullet.id = remoteID;
         return;
       }
 
