@@ -93,13 +93,9 @@ var play = function(GameData) {
             continue;
           }
 
-          console.log('player',playerData);
-
           GameData.toAdd.push(playerData);
           game.scope.$emit('game:newPlayer', playerData);
         }
-
-        console.log('all',allPlayers);
       });
     },
     playerDataSocketUpdate: function() {
@@ -110,6 +106,7 @@ var play = function(GameData) {
           x: this.mainPlayer.body.velocity.x,
           y: this.mainPlayer.body.velocity.y
         },
+        orientation: this.mainPlayer.orientation,
         xScale: this.mainPlayer.scale.x,
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
@@ -120,6 +117,7 @@ var play = function(GameData) {
       player.x = serverData.x;
       player.y = serverData.y;
       player.scale.x = serverData.xScale;
+      player.orientation = serverData.orientation;
     },
     remotePlayersMovementSocketUpdate: function() {
 

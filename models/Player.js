@@ -1,9 +1,12 @@
+var _ = require('lodash');
+
 var Player = function(opts) {
   this.id = opts.id;
   this.name = opts.name || null;
 
   // flip image sprite if -1
   this.xScale = 1;
+  this.orientation = 'right';
 
   this.x = opts.x || null;
   this.y = opts.y || null;
@@ -13,20 +16,14 @@ var Player = function(opts) {
     y: 0
   };
 
-  this.lastUpdate = 0;
+  this.timestamp = 0;
   this.health = 100;
   this.points = 0;
   this.lastShot = {};
 };
 
 Player.prototype.recordUpdate = function(data) {
-  this.x = data.x;
-  this.y = data.y;
-  this.xScale = data.xScale;
-  this.velocity.x = data.velocity.x;
-  this.velocity.y = data.velocity.y;
-  this.health = data.health;
-  this.lastUpdate = data.timestamp;
+  _.assign(this,data);
 };
 
 Player.prototype.recordShot = function(data) {
