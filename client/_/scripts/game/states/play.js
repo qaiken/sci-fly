@@ -51,6 +51,8 @@ var play = function(GameData) {
       this.explosions = this.add.group();
       this.explosions.createMultiple(30, 'kaboom');
       this.explosions.forEach(function(explosion) {
+        explosion.scale.x = 0.5;
+        explosion.scale.y = 0.5;
         explosion.anchor.x = 0.5;
         explosion.anchor.y = 0.5;
         explosion.animations.add('kaboom');
