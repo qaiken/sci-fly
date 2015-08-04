@@ -29,9 +29,15 @@ var play = function(GameData) {
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       this.remotePlayerAddedSocketUpdate();
-      this.playerMovementSocketUpdates = this.game.time.events.add(100,this.playerMovementSocketUpdate.bind(this));
+      this.playerMovementSocketUpdates = this.game.time.events.add(50,this.playerMovementSocketUpdate.bind(this));
       this.remotePlayersMovementSocketUpdate();
+      this.remotePlayerDisconnect();
 
+    },
+    remotePlayerDisconnect: function() {
+      this.game.socket.on('disconnect',function(playerData) {
+        GameData.getRemotePlayerById(playerData.id).kill();
+      });
     },
     remotePlayerAddedSocketUpdate: function() {
       var game = this.game;
@@ -39,22 +45,24 @@ var play = function(GameData) {
       game.socket.on('gameUpdated:add', function(data) {
         var allPlayers = data.allPlayers;
         var newPlayers = [];
-        var player;
+        var playerData;
 
         for (var i = 0; i < allPlayers.length; i++) {
-          player = allPlayers[i];
+          playerData = allPlayers[i];
 
-          if ( player.id === GameData.mainPlayer.id || GameData.getRemotePlayerById(player.id) ) {
+          if ( playerData.id === GameData.mainPlayer.id || GameData.getRemotePlayerById(playerData.id) ) {
             continue;
           }
 
-          GameData.toAdd.push(player);
-          game.scope.$emit('game:newPlayer', player);
+          GameData.toAdd.push(playerData);
+          game.scope.$emit('game:newPlayer', playerData);
         }
       });
     },
     playerMovementSocketUpdate: function() {
       this.game.socket.emit('updatePlayer', {
+        x: this.mainPlayer.body.x,
+        y: this.mainPlayer.body.y,
         velocity: {
           x: this.mainPlayer.body.velocity.x,
           y: this.mainPlayer.body.velocity.y
@@ -62,7 +70,7 @@ var play = function(GameData) {
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
-      this.playerMovementSocketUpdates = this.game.time.events.add(100,this.playerMovementSocketUpdate.bind(this));
+      this.playerMovementSocketUpdates = this.game.time.events.add(50,this.playerMovementSocketUpdate.bind(this));
     },
     updatePlayerPositionfromServer: function(player,serverData) {
       player.body.velocity.x = serverData.velocity.x;
@@ -139,6 +147,9 @@ var play = function(GameData) {
     checkWallCollisions: function() {
       this.physics.arcade.collide(this.mainPlayer, this.layer);
       this.physics.arcade.collide(this.emitter, this.layer);
+
+      this.physics.arcade.collide(GameData.remotePlayers, this.layer);
+      
       this.physics.arcade.collide(this.bullets, this.layer, function(bullet,layer) {
         bullet.kill();
       });
@@ -211,11 +222,11 @@ var play = function(GameData) {
     addPlayers: function() {
       var player, playerToAdd;
       while ( GameData.toAdd.length !== 0 ) {
-        var player = GameData.toAdd.shift();
-        if (!player) {
+        playerData = GameData.toAdd.shift();
+        if (!playerData) {
           return;
         }
-        playerToAdd = this.initPlayer(player);
+        playerToAdd = this.initPlayer(playerData);
         GameData.remotePlayers.push(playerToAdd);
       }
     },

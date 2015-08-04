@@ -2,6 +2,9 @@ var Player = function(opts) {
   this.id = opts.id;
   this.name = opts.name || null;
 
+  this.x = opts.x || 300;
+  this.y = opts.y || 90;
+
   this.velocity = {
     x: 0,
     y: 0
@@ -14,6 +17,8 @@ var Player = function(opts) {
 };
 
 Player.prototype.recordUpdate = function(data) {
+  this.x = data.x;
+  this.y = data.y;
   this.velocity.x = data.velocity.x;
   this.velocity.y = data.velocity.y;
   this.health = data.health;
@@ -34,17 +39,6 @@ Player.prototype.wasHit = function() {
 
 Player.prototype.isAlive = function() {
   return this.health > 0;
-};
-
-Player.prototype.serialize = function() {
-  return {
-    id: this.id,
-    x: this.x,
-    y: this.y,
-    xRel: this.xRel,
-    yRel: this.yRel,
-    timestamp: this.timestamp
-  };
 };
 
 module.exports = Player;

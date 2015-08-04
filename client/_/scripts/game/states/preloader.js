@@ -16,6 +16,7 @@ var preloader = function(GameData) {
 
     },
     create: function() {
+      this.game.stage.disableVisibilityChange = true;
       this.state.start('Play');
     }
   };

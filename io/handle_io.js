@@ -36,7 +36,8 @@ var handleIO = function(app,io) {
 
   function onDisconnect(player) {
     game.players.splice(game.players.indexOf(player),1);
-    game.io.emit('disconnect',player);
+    // send to all clients
+    game.io.sockets.emit('disconnect',player);
   }
 
   function onUpdatePlayer(playerData) {
@@ -49,6 +50,7 @@ var handleIO = function(app,io) {
 
     player.recordUpdate(playerData);
 
+    // send back to all clients
     game.io.sockets.emit('updatePlayers', {
       players: game.players
     });
@@ -63,10 +65,9 @@ var handleIO = function(app,io) {
       return;
     }
 
-    // send back to all clients except the socket that
-    // fired the update event
-    this.broadcast.emit('gameUpdated:add', {
-      player: player.serialize(),
+    // send back to all clients
+    game.io.sockets.emit('gameUpdated:add', {
+      player: player,
       allPlayers: game.players
     });
 
