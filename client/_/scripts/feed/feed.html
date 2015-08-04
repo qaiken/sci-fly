@@ -1,8 +1,10 @@
-<p>User: {{ feedCtrl.userName }}</p>
-<p>Health: {{ feedCtrl.health }}</p>
-<p>Kills: {{ feedCtrl.kills }}</p>
+<div id="game-feed">
+  <p>User: {{ feedCtrl.userName }}</p>
+  <p>Health: {{ feedCtrl.health }}</p>
+  <p>Kills: {{ feedCtrl.kills }}</p>
 
-<p>Players:</p>
-<ul ng-repeat="player in feedCtrl.players">
-  <li>{{player}}</li>
-</ul>
+  <p>Players:</p>
+  <ul ng-repeat="player in feedCtrl.players">
+    <li>{{player}}</li>
+  </ul>
+</div>
