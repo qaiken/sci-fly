@@ -19,7 +19,7 @@ var play = function(GameData) {
 
       this.mainPlayer = this.initPlayer(config);
       this.game.socket.emit('newPlayer',config);
-      this.game.scope.$emit('game:newPlayer', config);
+      this.game.scope.$emit('game:initMainPlayer');
 
       GameData.mainPlayer = this.mainPlayer;
       this.camera.follow(this.mainPlayer);
@@ -78,23 +78,23 @@ var play = function(GameData) {
       });
     },
     remotePlayerDisconnectOrKill: function() {
-      this.game.socket.on('disconnect',function(playerData) {
+      var game = this.game;
+
+      var removeRemotePlayer = function(playerData) {
         var player = GameData.getRemotePlayerById(playerData.id);
         if(!player) {
           return;
         }
         player.kill();
         GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
+      }
+
+      game.socket.on('disconnect',function(playerData) {
+        removeRemotePlayer(playerData);
+        game.scope.$emit('game:removePlayer',playerData);
       });
 
-      this.game.socket.on('kill',function(playerData) {
-        var player = GameData.getRemotePlayerById(playerData.id);
-        if(!player) {
-          return;
-        }
-        player.kill();
-        GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
-      });
+      game.socket.on('kill',removeRemotePlayer);
     },
     remoteBulletsShotSocketUpdate: function() {
       this.game.socket.on('bulletShot', function(bulletData) {
@@ -118,6 +118,7 @@ var play = function(GameData) {
 
         for (var i = 0; i < allPlayers.length; i++) {
           playerData = allPlayers[i];
+          game.scope.$emit('game:addPlayer', playerData);
 
           // skip if its ourself (the main player) 
           // or we already have them in our gameData.remotePlayers array
@@ -126,7 +127,6 @@ var play = function(GameData) {
           }
 
           GameData.toAdd.push(playerData);
-          game.scope.$emit('game:newPlayer', playerData);
         }
       });
     },

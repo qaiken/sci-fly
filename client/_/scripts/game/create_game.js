@@ -19,7 +19,6 @@ var createGame = function(opts) {
   game.state.add('Preloader', states.Preloader);
   game.state.add('Play', states.Play);
 
-
   GameData.socket = socket;
   GameData.currentPlayer = user.getCurrentUser();
   GameData.playerName = GameData.currentPlayer.userName;
