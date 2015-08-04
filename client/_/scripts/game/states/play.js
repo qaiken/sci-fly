@@ -27,15 +27,28 @@ var play = function(GameData) {
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       this.remotePlayerAddedSocketUpdate();
-      this.playerMovementSocketUpdates = this.game.time.events.add(50,this.playerMovementSocketUpdate.bind(this));
+      this.playerMovementSocketUpdates = this.game.time.events.add(20,this.playerMovementSocketUpdate.bind(this));
       this.remotePlayersMovementSocketUpdate();
       this.remotePlayerDisconnect();
+
+      this.remoteBulletsShotSocketUpdate();
 
     },
     remotePlayerDisconnect: function() {
       this.game.socket.on('disconnect',function(playerData) {
         GameData.getRemotePlayerById(playerData.id).kill();
       });
+    },
+    remoteBulletsShotSocketUpdate: function() {
+      this.game.socket.on('bulletShot', function(bulletData) {
+        var player = GameData.getRemotePlayerById(bulletData.id);
+
+        if(!player) {
+          return;
+        }
+
+        this.fireBullet(player,this.remoteBullets,true);
+      }.bind(this));
     },
     remotePlayerAddedSocketUpdate: function() {
       var game = this.game;
@@ -69,7 +82,7 @@ var play = function(GameData) {
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
-      this.playerMovementSocketUpdates = this.game.time.events.add(50,this.playerMovementSocketUpdate.bind(this));
+      this.playerMovementSocketUpdates = this.game.time.events.add(20,this.playerMovementSocketUpdate.bind(this));
     },
     updatePlayerDatafromServer: function(player,serverData) {
       player.body.velocity.x = serverData.velocity.x;
@@ -142,6 +155,18 @@ var play = function(GameData) {
         bullet.kill();
       });
     },
+    checkBulletCollisions: function() {
+      this.physics.arcade.overlap(this.mainPlayer, this.remoteBullets, this.damagePlayer, null, this);
+
+      this.physics.arcade.overlap(GameData.remotePlayers, this.bullets,this.shotRemotePlayer, null, this);
+    },
+    damagePlayer: function(mainPlayer,remoteBullets) {
+
+      console.log(mainPlayer.health);
+    },
+    shotRemotePlayer: function() {
+      console.log('dope');
+    },
     movePlayer: function(player) {
       player.body.velocity.x = 0;
       player.body.velocity.y = 0;
@@ -160,7 +185,7 @@ var play = function(GameData) {
         player.scale.x = 1;
       }
     },
-    fireBullet: function(player,bulletGroup) {
+    fireBullet: function(player,bulletGroup,remote) {
 
       var facing = player.body.facing;
       var bullet;
@@ -193,6 +218,20 @@ var play = function(GameData) {
       }
 
       this.bulletTime = this.time.now + 200;
+
+      if(remote) {
+        return;
+      }
+
+      this.game.socket.emit('shotBullet', {
+        id: this.game.socket.id,
+        y: bullet.y,
+        x: bullet.x,
+        velocity: {
+          x: bullet.body.velocity.x,
+          y: bullet.body.velocity.y
+        }
+      });
     },
     isFiring: function(player,bulletGroup) {
       if (this.fireButton.isDown) {
@@ -212,6 +251,8 @@ var play = function(GameData) {
     },
     update: function() {
       this.checkWallCollisions();
+
+      this.checkBulletCollisions();
 
       this.addPlayers();
 

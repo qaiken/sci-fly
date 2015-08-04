@@ -23,14 +23,16 @@ var handleIO = function(app,io) {
 
       game.players.push(player);
 
-      // socket.on('shotBullet', onShotBullet);
-      // socket.on('playerHit', onPlayerHit);
       socket.on('updatePlayer', onUpdatePlayer);
       socket.on('newPlayer', onNewPlayer);
       socket.on('setPlayerName', onSetPlayerName);
       socket.on('disconnect', function(e) {
         onDisconnect.call(this,player);
       });
+
+      socket.on('shotBullet', onShotBullet);
+      socket.on('playerHit', onPlayerHit);
+
     });
   }
 
@@ -38,6 +40,23 @@ var handleIO = function(app,io) {
     game.players.splice(game.players.indexOf(player),1);
     // send to all clients
     game.io.sockets.emit('disconnect',player);
+  }
+
+  function onPlayerHit() {
+    
+  }
+
+  function onShotBullet(bulletData) {
+    var player = game.getPlayerById(bulletData.id);
+
+    if (!player) {
+      console.log("Player not found: " + bulletData.id);
+      return;
+    }
+
+    player.recordShot(bulletData);
+    // send to all clients
+    game.io.sockets.emit('bulletShot', bulletData);
   }
 
   function onUpdatePlayer(playerData) {
