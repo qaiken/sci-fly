@@ -27,16 +27,29 @@ var play = function(GameData) {
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       this.remotePlayerAddedSocketUpdate();
-      this.playerMovementSocketUpdates = this.game.time.events.add(20,this.playerMovementSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(20,this.playerDataSocketUpdate.bind(this));
       this.remotePlayersMovementSocketUpdate();
-      this.remotePlayerDisconnect();
+      this.remotePlayerDisconnectOrKill();
 
       this.remoteBulletsShotSocketUpdate();
 
     },
-    remotePlayerDisconnect: function() {
+    remotePlayerDisconnectOrKill: function() {
       this.game.socket.on('disconnect',function(playerData) {
-        GameData.getRemotePlayerById(playerData.id).kill();
+        var player = GameData.getRemotePlayerById(playerData.id);
+        if(!player) {
+          return;
+        }
+        player.kill();
+        GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
+      });
+      this.game.socket.on('kill',function(playerData) {
+        var player = GameData.getRemotePlayerById(playerData.id);
+        if(!player) {
+          return;
+        }
+        player.kill();
+        GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
       });
     },
     remoteBulletsShotSocketUpdate: function() {
@@ -54,6 +67,7 @@ var play = function(GameData) {
       var game = this.game;
 
       game.socket.on('gameUpdated:add', function(data) {
+
         var allPlayers = data.allPlayers;
         var newPlayers = [];
         var playerData;
@@ -70,7 +84,7 @@ var play = function(GameData) {
         }
       });
     },
-    playerMovementSocketUpdate: function() {
+    playerDataSocketUpdate: function() {
       this.game.socket.emit('updatePlayer', {
         x: this.mainPlayer.body.x,
         y: this.mainPlayer.body.y,
@@ -82,7 +96,7 @@ var play = function(GameData) {
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
-      this.playerMovementSocketUpdates = this.game.time.events.add(20,this.playerMovementSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(20,this.playerDataSocketUpdate.bind(this));
     },
     updatePlayerDatafromServer: function(player,serverData) {
       player.body.velocity.x = serverData.velocity.x;
@@ -160,12 +174,24 @@ var play = function(GameData) {
 
       this.physics.arcade.overlap(GameData.remotePlayers, this.bullets,this.shotRemotePlayer, null, this);
     },
-    damagePlayer: function(mainPlayer,remoteBullets) {
+    killPlayer: function(mainPlayer) {
+      this.game.socket.emit('playerKilled',mainPlayer.id);
+      mainPlayer.kill();
 
-      console.log(mainPlayer.health);
+      this.mainPlayer = this.initPlayer({
+        id: this.game.socket.id
+      });
+
+      this.game.socket.emit('newPlayer', this.game.socket.id);
     },
-    shotRemotePlayer: function() {
-      console.log('dope');
+    damagePlayer: function(mainPlayer,bullet) {
+      if( (mainPlayer.health-= 5) < 0 ) {
+        this.killPlayer(mainPlayer);
+      }
+      bullet.kill();
+    },
+    shotRemotePlayer: function(remotePlayer,bullet) {
+      bullet.kill();
     },
     movePlayer: function(player) {
       player.body.velocity.x = 0;

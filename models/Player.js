@@ -5,8 +5,8 @@ var Player = function(opts) {
   // flip image sprite if -1
   this.xScale = 1;
 
-  this.x = opts.x || 300;
-  this.y = opts.y || 90;
+  this.x = opts.x || null;
+  this.y = opts.y || null;
 
   this.velocity = {
     x: 0,
