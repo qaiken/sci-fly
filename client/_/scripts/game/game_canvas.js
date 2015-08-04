@@ -1,5 +1,6 @@
 var game = angular.module('phaserApp.game');
 var createGame = require('./create_game');
+var alertify = require('alertify');
 
 game.directive('gameCanvas', ['User', 'gameSocket', '$injector', function(User, gameSocket, $injector) {
 
@@ -9,7 +10,7 @@ game.directive('gameCanvas', ['User', 'gameSocket', '$injector', function(User, 
       return;
     }
 
-    alertify.prompt("Please enter a username.", function (e, input) {
+    alertify.prompt("Please enter a username", function (e, input) {
       var userName = input || 'Player';
 
       var user = {
