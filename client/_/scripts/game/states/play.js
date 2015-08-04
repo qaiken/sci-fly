@@ -65,14 +65,16 @@ var play = function(GameData) {
           x: this.mainPlayer.body.velocity.x,
           y: this.mainPlayer.body.velocity.y
         },
+        xScale: this.mainPlayer.scale.x,
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
       this.playerMovementSocketUpdates = this.game.time.events.add(50,this.playerMovementSocketUpdate.bind(this));
     },
-    updatePlayerPositionfromServer: function(player,serverData) {
+    updatePlayerDatafromServer: function(player,serverData) {
       player.body.velocity.x = serverData.velocity.x;
       player.body.velocity.y = serverData.velocity.y;
+      player.scale.x = serverData.xScale;
     },
     remotePlayersMovementSocketUpdate: function() {
 
@@ -87,7 +89,7 @@ var play = function(GameData) {
           if ( playerData.id !== GameData.socket.id ) {
             player = GameData.getRemotePlayerById(playerData.id);
             if (player) {
-              this.updatePlayerPositionfromServer(player,playerData);
+              this.updatePlayerDatafromServer(player,playerData);
             }
           }
         }
@@ -141,7 +143,6 @@ var play = function(GameData) {
       });
     },
     movePlayer: function(player) {
-
       player.body.velocity.x = 0;
       player.body.velocity.y = 0;
 

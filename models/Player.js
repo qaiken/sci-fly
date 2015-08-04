@@ -2,6 +2,9 @@ var Player = function(opts) {
   this.id = opts.id;
   this.name = opts.name || null;
 
+  // flip image sprite if -1
+  this.xScale = 1;
+
   this.x = opts.x || 300;
   this.y = opts.y || 90;
 
@@ -19,6 +22,7 @@ var Player = function(opts) {
 Player.prototype.recordUpdate = function(data) {
   this.x = data.x;
   this.y = data.y;
+  this.xScale = data.xScale;
   this.velocity.x = data.velocity.x;
   this.velocity.y = data.velocity.y;
   this.health = data.health;
