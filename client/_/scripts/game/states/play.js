@@ -117,8 +117,8 @@ var play = function(GameData) {
       this.playerDataSocketUpdates = this.game.time.events.add(0,this.playerDataSocketUpdate.bind(this));
     },
     updatePlayerDatafromServer: function(player,serverData) {
-      player.body.velocity.x = serverData.velocity.x;
-      player.body.velocity.y = serverData.velocity.y;
+      player.x = serverData.x;
+      player.y = serverData.y;
       player.scale.x = serverData.xScale;
     },
     remotePlayersMovementSocketUpdate: function() {
