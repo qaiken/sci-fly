@@ -64,9 +64,9 @@ var play = function(GameData) {
       explosion.play('kaboom', 30, false, true);
     },
     generatePosition: function() {
-      var positions = [{x:300, y:90}, {x:550, y:180}];
+      var positions = [{x:2000, y:400}, {x:1550, y:400}, {x:1150, y:250}, {x:1350, y:100}, {x:1150, y:100}, {x:850, y:150}, {x:850, y:400}, {x:500, y:600}, {x:100, y:600}, {x:400, y:300},{x:300, y:90}];
       var i = Math.floor(Math.random()*positions.length);
-      return positions[i];
+      return positions[0];
     },
     playerScoredSocketUpdate: function() {
       var game = this.game;
@@ -87,7 +87,7 @@ var play = function(GameData) {
         }
         player.kill();
         GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
-      }
+      };
 
       game.socket.on('disconnect',function(playerData) {
         removeRemotePlayer(playerData);
