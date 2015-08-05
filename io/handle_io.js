@@ -101,6 +101,7 @@ var handleIO = function(app,io) {
       player.x = opts.x;
       player.y = opts.y;
       player.kills = opts.kills;
+      player.name = game.mainPlayerName;
     }
 
     // send back to all clients
@@ -112,6 +113,7 @@ var handleIO = function(app,io) {
 
   function onSetPlayerName(opts) {
     getPlayerById(this.id).name = opts.name;
+    game.mainPlayerName = opts.name;
     this.emit('playerDetailsReceived');
   }
 

@@ -229,7 +229,7 @@ var play = function(GameData) {
     killPlayer: function(mainPlayer) {
       var kills = mainPlayer.kills;
       var id = mainPlayer.id;
-      var name = GameData.mainPlayer.name;
+      var name = GameData.playerName;
 
       this.game.socket.emit('playerKilled',id);
       mainPlayer.kill();
