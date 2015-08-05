@@ -4,7 +4,7 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
 
   var feedCtrl = this;
 
-  feedCtrl.players = [];
+  feedCtrl.players = {};
 
   $rootScope.$on('game:initMainPlayer', function() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -29,14 +29,17 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
     localStorage.setItem('currentUser',JSON.stringify(currentUser));
   });
 
-  $rootScope.$on('game:addPlayer', function(e, player) {
-    if( feedCtrl.players.indexOf(player.name) === -1 ) {
-      feedCtrl.players.push(player.name);
+  $rootScope.$on('game:updatePlayers', function(e, player) {
+    var name = player.name;
+    var kills = player.kills;
+
+    if(name) {
+      feedCtrl.players[name] = kills;
     }
   });
 
   $rootScope.$on('game:removePlayer', function(e, player) {
-    feedCtrl.players.splice(feedCtrl.players.indexOf(player.name),1);
+    delete feedCtrl.players[player.name];
   });
 
 }]);

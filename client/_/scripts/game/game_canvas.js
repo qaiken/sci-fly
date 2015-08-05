@@ -37,7 +37,6 @@ game.directive('gameCanvas', ['User', 'gameSocket', '$injector', function(User, 
       el: el,
       scope: scope,
       socket: gameSocket,
-      players: scope.gamectrl.players,
       $injector: $injector
     };
 

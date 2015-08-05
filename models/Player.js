@@ -10,6 +10,7 @@ var Player = function(opts) {
 
   this.x = opts.x || null;
   this.y = opts.y || null;
+  this.kills = opts.kills || 0;
 
   this.velocity = {
     x: 0,
@@ -18,7 +19,6 @@ var Player = function(opts) {
 
   this.timestamp = 0;
   this.health = 100;
-  this.kills = 0;
   this.lastShot = {};
 };
 

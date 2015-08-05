@@ -7,8 +7,8 @@
 
   <div class="players">
     <h3>Players:</h3>
-    <ul ng-repeat="player in feedCtrl.players">
-      <li>{{player}}</li>
+    <ul ng-repeat="(player, kills) in feedCtrl.players">
+      <li>{{player}} : {{kills}}</li>
     </ul>
   </div>
 </div>

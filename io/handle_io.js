@@ -20,7 +20,6 @@ var handleIO = function(app,io) {
       socket.emit('connected', { id: socket.id });
 
       var player = new Player({ id: socket.id });
-
       game.players.push(player);
 
       socket.on('updatePlayer', onUpdatePlayer);
@@ -48,6 +47,10 @@ var handleIO = function(app,io) {
 
     ++player.kills;
     game.io.sockets.emit('playerScored',player);
+
+    game.io.sockets.emit('updatePlayers', {
+      players: game.players
+    });
   }
 
   function onPlayerKilled(id) {
@@ -87,15 +90,17 @@ var handleIO = function(app,io) {
   }
 
   function onNewPlayer(opts) {
-    // mainPlayer
     var player = getPlayerById(this.id);
-    player.x = opts.x;
-    player.y = opts.y;
 
     // remote player
     if (!player) {
       player = new Player(opts);
       game.players.push(player);
+    } else {
+      // main player
+      player.x = opts.x;
+      player.y = opts.y;
+      player.kills = opts.kills;
     }
 
     // send back to all clients

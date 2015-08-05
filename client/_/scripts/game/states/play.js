@@ -14,7 +14,8 @@ var play = function(GameData) {
       var config = {
         id: this.game.socket.id,
         x: startPos.x,
-        y: startPos.y
+        y: startPos.y,
+        kills: GameData.currentPlayer.kills
       };
 
       this.mainPlayer = this.initPlayer(config);
@@ -37,7 +38,7 @@ var play = function(GameData) {
       this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
       this.remotePlayerAddedSocketUpdate();
-      this.playerDataSocketUpdates = this.game.time.events.add(0,this.playerDataSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(50,this.playerDataSocketUpdate.bind(this));
       this.remotePlayersMovementSocketUpdate();
       this.remotePlayerDisconnectOrKill();
 
@@ -75,6 +76,8 @@ var play = function(GameData) {
         if( playerData.id === GameData.mainPlayer.id ) {
           game.scope.$emit('game:playerScored');
         }
+
+        game.scope.$emit('game:updatePlayers',playerData);
       });
     },
     remotePlayerDisconnectOrKill: function() {
@@ -118,7 +121,8 @@ var play = function(GameData) {
 
         for (var i = 0; i < allPlayers.length; i++) {
           playerData = allPlayers[i];
-          game.scope.$emit('game:addPlayer', playerData);
+
+          game.scope.$emit('game:updatePlayers', playerData);
 
           // skip if its ourself (the main player) 
           // or we already have them in our gameData.remotePlayers array
@@ -143,16 +147,16 @@ var play = function(GameData) {
         health: this.mainPlayer.health,
         timestamp: new Date().getTime()
       });
-      this.playerDataSocketUpdates = this.game.time.events.add(0,this.playerDataSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(50,this.playerDataSocketUpdate.bind(this));
     },
     updatePlayerDatafromServer: function(player,serverData) {
       player.x = serverData.x;
       player.y = serverData.y;
       player.scale.x = serverData.xScale;
       player.orientation = serverData.orientation;
+      player.kills = serverData.kills;
     },
     remotePlayersMovementSocketUpdate: function() {
-
       this.game.socket.on('updatePlayers', function(playersData) {
         var players = playersData.players;
         var player, playerData;
@@ -184,18 +188,19 @@ var play = function(GameData) {
     initPlayer: function(opts) {
       var x = opts.x || 300;
       var y = opts.y || 90;
+      var kills = opts.kills || 0;
       var id = opts.id;
 
       var player = this.add.sprite(x, y, 'phaser');
       player.orientation = 'right';
       player.health = 100;
       player.id = id;
+      player.kills = kills;
       this.physics.enable(player);
 
       return player;
     },
     initBullets: function(bulletGroup) {
-
       bulletGroup.enableBody = true;
       bulletGroup.physicsBodyType = Phaser.Physics.ARCADE;
       bulletGroup.createMultiple(30, 'bullet');
@@ -203,7 +208,6 @@ var play = function(GameData) {
       bulletGroup.setAll('anchor.y', 1);
       bulletGroup.setAll('outOfBoundsKill', true);
       bulletGroup.setAll('checkWorldBounds', true);
-
     },
     checkWallCollisions: function() {
       this.physics.arcade.collide(this.mainPlayer, this.layer);
@@ -223,7 +227,11 @@ var play = function(GameData) {
       this.physics.arcade.overlap(GameData.remotePlayers, this.bullets,this.shotRemotePlayer, null, this);
     },
     killPlayer: function(mainPlayer) {
-      this.game.socket.emit('playerKilled',mainPlayer.id);
+      var kills = mainPlayer.kills;
+      var id = mainPlayer.id;
+      var name = GameData.mainPlayer.name;
+
+      this.game.socket.emit('playerKilled',id);
       mainPlayer.kill();
 
       var startPos = this.generatePosition();
@@ -231,7 +239,9 @@ var play = function(GameData) {
       var config = {
         id: this.game.socket.id,
         x: startPos.x,
-        y: startPos.y
+        y: startPos.y,
+        kills: kills,
+        name: name
       };
 
       this.mainPlayer = this.initPlayer(config);
@@ -276,7 +286,6 @@ var play = function(GameData) {
       }
     },
     fireBullet: function(player,bulletGroup,remoteID) {
-
       var facing = player.body.facing;
       var bullet;
 
