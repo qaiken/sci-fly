@@ -118,6 +118,7 @@ var play = function(GameData) {
         var allPlayers = data.allPlayers;
         var newPlayers = [];
         var playerData;
+        var playerToAdd;
 
         for (var i = 0; i < allPlayers.length; i++) {
           playerData = allPlayers[i];
@@ -130,9 +131,10 @@ var play = function(GameData) {
             continue;
           }
 
-          GameData.toAdd.push(playerData);
+          playerToAdd = this.initPlayer(playerData);
+          GameData.remotePlayers.push(playerToAdd);
         }
-      });
+      }.bind(this));
     },
     playerDataSocketUpdate: function() {
       this.game.socket.emit('updatePlayer', {
@@ -268,8 +270,16 @@ var play = function(GameData) {
       this.playExplosion(remotePlayer);
     },
     movePlayer: function(player) {
+      var facing = player.body.facing;
+
       player.body.velocity.x = 0;
       player.body.velocity.y = 0;
+
+      if( facing === 1 ) {
+        player.orientation = 'left';
+      } else if ( facing === 2 ) {
+        player.orientation = 'right';
+      }
 
       if (this.cursors.up.isDown) {
         player.body.velocity.y = -100;
@@ -286,14 +296,7 @@ var play = function(GameData) {
       }
     },
     fireBullet: function(player,bulletGroup,remoteID) {
-      var facing = player.body.facing;
       var bullet;
-
-      if( facing === 1 ) {
-        player.orientation = 'left';
-      } else if ( facing === 2 ) {
-        player.orientation = 'right';
-      }
 
       // Prevent too many bullets from firing
       if (this.time.now <= this.bulletTime) {
@@ -338,23 +341,10 @@ var play = function(GameData) {
         this.fireBullet(player,bulletGroup);
       }
     },
-    addPlayers: function() {
-      var player, playerToAdd;
-      while ( GameData.toAdd.length !== 0 ) {
-        playerData = GameData.toAdd.shift();
-        if (!playerData) {
-          return;
-        }
-        playerToAdd = this.initPlayer(playerData);
-        GameData.remotePlayers.push(playerToAdd);
-      }
-    },
     update: function() {
       this.checkWallCollisions();
 
       this.checkBulletCollisions();
-
-      this.addPlayers();
 
       this.movePlayer(this.mainPlayer);
       this.isFiring(this.mainPlayer,this.bullets);
