@@ -72,7 +72,7 @@ var play = function(GameData) {
     playerScoredSocketUpdate: function() {
       var game = this.game;
 
-      game.socket.on('playerScored',function(playerData) {
+      game.socket.on('playerScored', function(playerData) {
         if( playerData.id === GameData.mainPlayer.id ) {
           game.scope.$emit('game:playerScored');
         }
@@ -92,7 +92,7 @@ var play = function(GameData) {
         GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
       };
 
-      game.socket.on('disconnect',function(playerData) {
+      game.socket.on('disconnect', function(playerData) {
         removeRemotePlayer(playerData);
         game.scope.$emit('game:removePlayer',playerData);
       });
@@ -149,9 +149,11 @@ var play = function(GameData) {
       });
       this.playerDataSocketUpdates = this.game.time.events.add(50,this.playerDataSocketUpdate.bind(this));
     },
-    updatePlayerDatafromServer: function(player,serverData) {
-      player.x = serverData.x;
-      player.y = serverData.y;
+    updatePlayerDatafromServer: function(player, serverData) {
+      // 8 is half of ship width
+      // 7 is half of ship height
+      player.x = serverData.x + 8;
+      player.y = serverData.y + 7;
       player.scale.x = serverData.xScale;
       player.orientation = serverData.orientation;
       player.kills = serverData.kills;
@@ -192,6 +194,7 @@ var play = function(GameData) {
       var id = opts.id;
 
       var player = this.add.sprite(x, y, 'phaser');
+      player.anchor.set(0.5);
       player.orientation = 'right';
       player.health = 100;
       player.id = id;
@@ -334,9 +337,9 @@ var play = function(GameData) {
         }
       });
     },
-    isFiring: function(player,bulletGroup) {
+    isFiring: function(player, bulletGroup) {
       if (this.fireButton.isDown) {
-        this.fireBullet(player,bulletGroup);
+        this.fireBullet(player, bulletGroup);
       }
     },
     addPlayers: function() {
@@ -358,7 +361,7 @@ var play = function(GameData) {
       this.addPlayers();
 
       this.movePlayer(this.mainPlayer);
-      this.isFiring(this.mainPlayer,this.bullets);
+      this.isFiring(this.mainPlayer, this.bullets);
     }
   };
 };
