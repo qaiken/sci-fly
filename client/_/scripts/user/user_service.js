@@ -1,20 +1,20 @@
 var user = angular.module('phaserApp.user');
 
-user.service('User', function() {
+user.service('User', ['$rootScope', function($rootScope) {
 
-  var currentUser = localStorage.getItem('currentUser');
+  var _currentUser = localStorage.getItem('currentUser');
 
-  if (currentUser) {
-    currentUser = JSON.parse(currentUser);
+  if (_currentUser) {
+    _currentUser = JSON.parse(_currentUser);
   }
 
   this.setCurrentUser = function(user) {
     localStorage.setItem('currentUser', JSON.stringify(user));
-    currentUser = user;
+    _currentUser = user;
   };
 
   this.getCurrentUser = function() {
-    return currentUser;
+    return _currentUser;
   };
 
   this.modifyCurrentUser = function(opts) {
@@ -29,7 +29,17 @@ user.service('User', function() {
       this.setCurrentUser(opts);
     }
 
-    return currentUser;
+    return _currentUser;
   };
 
-});
+  $rootScope.$on('game:healthChange', function(e, health) {
+    _currentUser.health = health;
+    localStorage.setItem('currentUser', JSON.stringify(_currentUser));
+  });
+
+  $rootScope.$on('game:playerScored', function() {
+    ++_currentUser.kills;
+    localStorage.setItem('currentUser', JSON.stringify(_currentUser));
+  });
+
+}]);

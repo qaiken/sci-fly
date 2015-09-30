@@ -1,4 +1,4 @@
-var user = angular.module('phaserApp.user',[]);
+var user = angular.module('phaserApp.user', []);
 
 require('./user_service');
 

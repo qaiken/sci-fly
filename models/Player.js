@@ -23,7 +23,7 @@ var Player = function(opts) {
 };
 
 Player.prototype.recordUpdate = function(data) {
-  _.assign(this,data);
+  _.assign(this, data);
 };
 
 Player.prototype.recordShot = function(data) {

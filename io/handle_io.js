@@ -14,7 +14,6 @@ var handleIO = function(app,io) {
   }
 
   function bindSocketEvents() {
-
     game.io.sockets.on('connection', function(socket) {
 
       socket.emit('connected', { id: socket.id });
@@ -26,7 +25,7 @@ var handleIO = function(app,io) {
       socket.on('newPlayer', onNewPlayer);
       socket.on('setPlayerName', onSetPlayerName);
       socket.on('disconnect', function(e) {
-        onDisconnect.call(this,player);
+        onDisconnect.call(this, player);
       });
 
       socket.on('shotBullet', onShotBullet);
@@ -37,7 +36,7 @@ var handleIO = function(app,io) {
   }
 
   function onDisconnect(player) {
-    game.players.splice(game.players.indexOf(player),1);
+    game.players.splice(game.players.indexOf(player), 1);
     // send to all clients
     game.io.sockets.emit('disconnect',player);
   }
@@ -46,7 +45,7 @@ var handleIO = function(app,io) {
     var player = getPlayerById(id);
 
     ++player.kills;
-    game.io.sockets.emit('playerScored',player);
+    game.io.sockets.emit('playerScored', player);
 
     game.io.sockets.emit('updatePlayers', {
       players: game.players
@@ -55,7 +54,7 @@ var handleIO = function(app,io) {
 
   function onPlayerKilled(id) {
     var player = getPlayerById(id);
-    game.players.splice(game.players.indexOf(player),1);
+    game.players.splice(game.players.indexOf(player), 1);
     // send to all clients
     game.io.sockets.emit('kill', player);
   }
@@ -83,7 +82,7 @@ var handleIO = function(app,io) {
 
     player.recordUpdate(playerData);
 
-    // send back to all clients
+    // send to all clients
     game.io.sockets.emit('updatePlayers', {
       players: game.players
     });
@@ -96,15 +95,15 @@ var handleIO = function(app,io) {
     if (!player) {
       player = new Player(opts);
       game.players.push(player);
+    // main player
     } else {
-      // main player
       player.x = opts.x;
       player.y = opts.y;
       player.kills = opts.kills;
       player.name = game.mainPlayerName;
     }
 
-    // send back to all clients
+    // send to all clients
     game.io.sockets.emit('gameUpdated:add', {
       player: player,
       allPlayers: game.players

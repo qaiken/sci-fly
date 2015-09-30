@@ -1,3 +1,5 @@
+var Player = require('../../player/player');
+
 var play = function(GameData) {
 
   GameData.States.Play = function(game) {
@@ -48,6 +50,7 @@ var play = function(GameData) {
 
       this.playerScoredSocketUpdate();
     },
+
     initExplosions: function() {
       this.explosions = this.add.group();
       this.explosions.createMultiple(30, 'kaboom');
@@ -59,16 +62,19 @@ var play = function(GameData) {
         explosion.animations.add('kaboom');
       });
     },
+
     playExplosion: function(player) {
       var explosion = this.explosions.getFirstExists(false);
       explosion.reset(player.body.x, player.body.y);
       explosion.play('kaboom', 30, false, true);
     },
+
     generatePosition: function() {
       var positions = [{x:2000, y:400}, {x:1550, y:400}, {x:1150, y:250}, {x:1350, y:100}, {x:1150, y:100}, {x:850, y:150}, {x:850, y:400}, {x:500, y:600}, {x:100, y:600}, {x:400, y:300},{x:300, y:90}];
       var i = Math.floor(Math.random()*positions.length);
       return positions[i];
     },
+
     playerScoredSocketUpdate: function() {
       var game = this.game;
 
@@ -80,6 +86,7 @@ var play = function(GameData) {
         game.scope.$emit('game:updatePlayers',playerData);
       });
     },
+
     remotePlayerDisconnectOrKill: function() {
       var game = this.game;
 
@@ -99,6 +106,7 @@ var play = function(GameData) {
 
       game.socket.on('kill',removeRemotePlayer);
     },
+
     remoteBulletsShotSocketUpdate: function() {
       this.game.socket.on('bulletShot', function(bulletData) {
         var player = GameData.getRemotePlayerById(bulletData.id);
@@ -110,6 +118,7 @@ var play = function(GameData) {
         this.fireBullet(player,this.remoteBullets,bulletData.id);
       }.bind(this));
     },
+
     remotePlayerAddedSocketUpdate: function() {
       var game = this.game;
 
@@ -134,6 +143,7 @@ var play = function(GameData) {
         }
       });
     },
+
     playerDataSocketUpdate: function() {
       this.game.socket.emit('updatePlayer', {
         x: this.mainPlayer.body.x,
@@ -149,6 +159,7 @@ var play = function(GameData) {
       });
       this.playerDataSocketUpdates = this.game.time.events.add(50,this.playerDataSocketUpdate.bind(this));
     },
+
     updatePlayerDatafromServer: function(player, serverData) {
       // 8 is half of ship width
       // 7 is half of ship height
@@ -158,6 +169,7 @@ var play = function(GameData) {
       player.orientation = serverData.orientation;
       player.kills = serverData.kills;
     },
+
     remotePlayersMovementSocketUpdate: function() {
       this.game.socket.on('updatePlayers', function(playersData) {
         var players = playersData.players;
@@ -176,6 +188,7 @@ var play = function(GameData) {
         }
       }.bind(this));
     },
+
     initWorld: function() {
       this.map = this.add.tilemap('level3');
 
@@ -187,22 +200,11 @@ var play = function(GameData) {
 
       this.layer.resizeWorld();
     },
+
     initPlayer: function(opts) {
-      var x = opts.x || 300;
-      var y = opts.y || 90;
-      var kills = opts.kills || 0;
-      var id = opts.id;
-
-      var player = this.add.sprite(x, y, 'phaser');
-      player.anchor.set(0.5);
-      player.orientation = 'right';
-      player.health = 100;
-      player.id = id;
-      player.kills = kills;
-      this.physics.enable(player);
-
-      return player;
+      return Player.call(this, opts);
     },
+
     initBullets: function(bulletGroup) {
       bulletGroup.enableBody = true;
       bulletGroup.physicsBodyType = Phaser.Physics.ARCADE;
@@ -212,6 +214,7 @@ var play = function(GameData) {
       bulletGroup.setAll('outOfBoundsKill', true);
       bulletGroup.setAll('checkWorldBounds', true);
     },
+
     checkWallCollisions: function() {
       this.physics.arcade.collide(this.mainPlayer, this.layer);
 
@@ -224,11 +227,13 @@ var play = function(GameData) {
         bullet.kill();
       });
     },
+
     checkBulletCollisions: function() {
       this.physics.arcade.overlap(this.mainPlayer, this.remoteBullets, this.damagePlayer, null, this);
 
       this.physics.arcade.overlap(GameData.remotePlayers, this.bullets,this.shotRemotePlayer, null, this);
     },
+
     killPlayer: function(mainPlayer) {
       var kills = mainPlayer.kills;
       var id = mainPlayer.id;
@@ -254,6 +259,7 @@ var play = function(GameData) {
 
       this.camera.follow(this.mainPlayer);
     },
+
     damagePlayer: function(mainPlayer,remoteBullet) {
       this.game.scope.$emit('game:healthChange', mainPlayer.health-= 20);
       this.playExplosion(mainPlayer);
@@ -263,13 +269,13 @@ var play = function(GameData) {
       }
       remoteBullet.kill();
     },
-    shotRemotePlayer: function(remotePlayer,bullet) {
-      var explosion;
 
+    shotRemotePlayer: function(remotePlayer,bullet) {
       bullet.kill();
       
       this.playExplosion(remotePlayer);
     },
+
     movePlayer: function(player) {
       var facing = player.body.facing;
 
@@ -296,6 +302,7 @@ var play = function(GameData) {
         player.scale.x = 1;
       }
     },
+
     fireBullet: function(player,bulletGroup,remoteID) {
       var bullet;
 
@@ -337,11 +344,13 @@ var play = function(GameData) {
         }
       });
     },
+
     isFiring: function(player, bulletGroup) {
       if (this.fireButton.isDown) {
         this.fireBullet(player, bulletGroup);
       }
     },
+
     addPlayers: function() {
       var player, playerToAdd;
       while ( GameData.toAdd.length !== 0 ) {
@@ -353,6 +362,7 @@ var play = function(GameData) {
         GameData.remotePlayers.push(playerToAdd);
       }
     },
+
     update: function() {
       this.checkWallCollisions();
 

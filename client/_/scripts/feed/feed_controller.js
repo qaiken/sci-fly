@@ -2,8 +2,7 @@ var alertify = require('alertify');
 
 var feed = angular.module('phaserApp.feed');
 
-feed.controller('FeedController', ['$rootScope', function($rootScope) {
-
+feed.controller('FeedController', ['$rootScope', 'User', function($rootScope, User) {
   var feedCtrl = this;
 
   feedCtrl.userName = '';
@@ -18,7 +17,7 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
   };
 
   $rootScope.$on('game:initMainPlayer', function() {
-    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    var currentUser = User.getCurrentUser();
 
     feedCtrl.userName = currentUser.userName;
     feedCtrl.health = currentUser.health;
@@ -26,18 +25,11 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
   });
 
   $rootScope.$on('game:playerScored', function() {
-    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    feedCtrl.kills = ++currentUser.kills;
-
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    ++feedCtrl.kills;
   });
 
-  $rootScope.$on('game:healthChange',function(e, health) {
-    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    currentUser.health = health;
+  $rootScope.$on('game:healthChange', function(e, health) {
     feedCtrl.health = health;
-
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
   });
 
   $rootScope.$on('game:updatePlayers', function(e, player) {

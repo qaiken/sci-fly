@@ -2,7 +2,6 @@ var phaser = require('phaser');
 var GameData = require('./states');
 
 var createGame = function(opts) {
-
   var el = opts.el;
   var scope = opts.scope;
   var socket = opts.socket;
