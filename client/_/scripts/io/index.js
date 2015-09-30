@@ -5,7 +5,5 @@ var ioNetwork = angular.module('phaserApp.ioNetwork', [
 ]);
 
 require('./init_socket');
-require('./players');
-require('./feed');
 
 module.exports = ioNetwork;
