@@ -1,3 +1,5 @@
-# phaser-multiplayer
+# sci-fly
 
-### https://phaser-multiplayer.herokuapp.com/
+##### demo: http://scifly.herokuapp.com/
+
+##### article: http://quintonlouisaiken.com/sci-fly/
