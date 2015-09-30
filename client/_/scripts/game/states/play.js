@@ -118,7 +118,6 @@ var play = function(GameData) {
         var allPlayers = data.allPlayers;
         var newPlayers = [];
         var playerData;
-        var playerToAdd;
 
         for (var i = 0; i < allPlayers.length; i++) {
           playerData = allPlayers[i];
@@ -131,10 +130,9 @@ var play = function(GameData) {
             continue;
           }
 
-          playerToAdd = this.initPlayer(playerData);
-          GameData.remotePlayers.push(playerToAdd);
+          GameData.toAdd.push(playerData);
         }
-      }.bind(this));
+      });
     },
     playerDataSocketUpdate: function() {
       this.game.socket.emit('updatePlayer', {
@@ -341,10 +339,23 @@ var play = function(GameData) {
         this.fireBullet(player,bulletGroup);
       }
     },
+    addPlayers: function() {
+      var player, playerToAdd;
+      while ( GameData.toAdd.length !== 0 ) {
+        playerData = GameData.toAdd.shift();
+        if (!playerData) {
+          return;
+        }
+        playerToAdd = this.initPlayer(playerData);
+        GameData.remotePlayers.push(playerToAdd);
+      }
+    },
     update: function() {
       this.checkWallCollisions();
 
       this.checkBulletCollisions();
+
+      this.addPlayers();
 
       this.movePlayer(this.mainPlayer);
       this.isFiring(this.mainPlayer,this.bullets);
