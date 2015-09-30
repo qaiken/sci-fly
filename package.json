@@ -1,5 +1,5 @@
 {
-  "name": "phaser-multiplayer",
+  "name": "sci-fly",
   "version": "1.0.0",
   "description": "multiplayer game built with phaser,angular,node,express,socketio",
   "main": "server.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qaiken/phaser-multiplayer.git"
+    "url": "git@github.com:qaiken/sci-fly.git"
   },
   "keywords": [
     "multiplayer",
@@ -21,9 +21,9 @@
   "author": "Quinton Aiken <quintonlaiken@gmail.com> (http://quintonlouisaiken.com)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/qaiken/phaser-multiplayer/issues"
+    "url": "https://github.com/qaiken/sci-fly/issues"
   },
-  "homepage": "https://github.com/qaiken/phaser-multiplayer#readme",
+  "homepage": "https://github.com/qaiken/sci-fly#readme",
   "dependencies": {
     "express": "^4.13.2",
     "lodash": "^3.10.1",

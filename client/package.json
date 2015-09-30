@@ -1,7 +1,7 @@
 {
-  "name": "phaser-multiplayer-client",
+  "name": "sci-fly-client",
   "version": "1.0.0",
-  "description": "phaser-multiplayer-client",
+  "description": "sci-fly-client",
   "author": "Quinton Aiken",
   "dependencies": {
     "angular": "^1.4.3",
