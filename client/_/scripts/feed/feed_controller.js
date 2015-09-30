@@ -1,10 +1,21 @@
+var alertify = require('alertify');
+
 var feed = angular.module('phaserApp.feed');
 
 feed.controller('FeedController', ['$rootScope', function($rootScope) {
 
   var feedCtrl = this;
 
+  feedCtrl.userName = '';
+  feedCtrl.health = '';
+  feedCtrl.kills = '';
+
+  feedCtrl.alertTimer = '';
   feedCtrl.players = {};
+
+  feedCtrl.onNoRemotePlayers = function() {
+    alertify.alert('It looks like there are no other players. Invite your friends!');
+  };
 
   $rootScope.$on('game:initMainPlayer', function() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -18,7 +29,7 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
     feedCtrl.kills = ++currentUser.kills;
 
-    localStorage.setItem('currentUser',JSON.stringify(currentUser));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
   });
 
   $rootScope.$on('game:healthChange',function(e, health) {
@@ -26,7 +37,7 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
     currentUser.health = health;
     feedCtrl.health = health;
 
-    localStorage.setItem('currentUser',JSON.stringify(currentUser));
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
   });
 
   $rootScope.$on('game:updatePlayers', function(e, player) {
@@ -36,6 +47,14 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
     if(name) {
       feedCtrl.players[name] = kills;
     }
+
+    clearTimeout(feedCtrl.alertTimer);
+
+    if( Object.keys(feedCtrl.players).length > 1 ) {
+      return;
+    }
+
+    feedCtrl.alertTimer = setTimeout(feedCtrl.onNoRemotePlayers, 2000);
   });
 
   $rootScope.$on('game:removePlayer', function(e, player) {
