@@ -33,8 +33,6 @@ feed.controller('FeedController', ['$rootScope', function($rootScope) {
     var name = player.name;
     var kills = player.kills;
 
-    console.log(player);
-
     if(name) {
       feedCtrl.players[name] = kills;
     }
