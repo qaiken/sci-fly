@@ -19,8 +19,8 @@ var createGame = function(opts) {
   game.state.add('Play', states.Play);
 
   GameData.socket = socket;
-  GameData.currentPlayer = user.getCurrentUser();
-  GameData.playerName = GameData.currentPlayer.userName;
+  GameData.mainPlayer = user.getCurrentUser();
+  GameData.playerName = GameData.mainPlayer.userName;
 
   GameData.socket.emit('setPlayerName', { name: GameData.playerName });
 

@@ -38,11 +38,11 @@ var handleIO = function(app,io) {
   function onDisconnect(player) {
     game.players.splice(game.players.indexOf(player), 1);
     // send to all clients
-    game.io.sockets.emit('disconnect',player);
+    game.io.sockets.emit('disconnect', player);
   }
 
   function onPlayerScored(id) {
-    var player = getPlayerById(id);
+    var player = game.getPlayerById(id);
 
     ++player.kills;
     game.io.sockets.emit('playerScored', player);
@@ -53,7 +53,7 @@ var handleIO = function(app,io) {
   }
 
   function onPlayerKilled(id) {
-    var player = getPlayerById(id);
+    var player = game.getPlayerById(id);
     game.players.splice(game.players.indexOf(player), 1);
     // send to all clients
     game.io.sockets.emit('kill', player);
@@ -63,11 +63,10 @@ var handleIO = function(app,io) {
     var player = game.getPlayerById(bulletData.id);
 
     if (!player) {
-      console.log("Player not found: " + bulletData.id);
+      console.warn("Player not found: " + bulletData.id);
       return;
     }
 
-    player.recordShot(bulletData);
     // send to all clients
     game.io.sockets.emit('bulletShot', bulletData);
   }
@@ -76,7 +75,7 @@ var handleIO = function(app,io) {
     var player = game.getPlayerById(this.id);
 
     if (!player) {
-      console.log("Player not found: ", this.id);
+      console.warn("Player not found: ", this.id);
       return;
     }
 
@@ -89,7 +88,7 @@ var handleIO = function(app,io) {
   }
 
   function onNewPlayer(opts) {
-    var player = getPlayerById(this.id);
+    var player = game.getPlayerById(this.id);
 
     // remote player
     if (!player) {
@@ -111,21 +110,9 @@ var handleIO = function(app,io) {
   }
 
   function onSetPlayerName(opts) {
-    getPlayerById(this.id).name = opts.name;
+    game.getPlayerById(this.id).name = opts.name;
     game.mainPlayerName = opts.name;
     this.emit('playerDetailsReceived');
-  }
-
-  // each socket has a unique id and we set the player's id
-  // to be equal to the socket id so that we can get the corresponding
-  // player
-  function getPlayerById(id) {
-    for (var i = 0; i < game.players.length; i++) {
-      if (game.players[i].id === id) {
-        return game.players[i];
-      }
-    }
-    return false;
   }
 
   init(io);
