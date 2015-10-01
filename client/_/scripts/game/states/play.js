@@ -17,11 +17,12 @@ var play = function(GameData) {
         id: this.game.socket.id,
         x: startPos.x,
         y: startPos.y,
-        kills: GameData.currentPlayer.kills
+        health: JSON.parse(localStorage.getItem('currentUser')).health,
+        kills: GameData.mainPlayer.kills
       };
 
       this.mainPlayer = this.initPlayer(config);
-      this.game.socket.emit('newPlayer',config);
+      this.game.socket.emit('newPlayer', config);
       this.game.scope.$emit('game:initMainPlayer');
 
       GameData.mainPlayer = this.mainPlayer;
@@ -81,9 +82,10 @@ var play = function(GameData) {
       game.socket.on('playerScored', function(playerData) {
         if( playerData.id === GameData.mainPlayer.id ) {
           game.scope.$emit('game:playerScored');
+          ++GameData.mainPlayer.kills;
         }
 
-        game.scope.$emit('game:updatePlayers',playerData);
+        game.scope.$emit('game:updatePlayers', playerData);
       });
     },
 
@@ -96,15 +98,15 @@ var play = function(GameData) {
           return;
         }
         player.kill();
-        GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player),1);
+        GameData.remotePlayers.splice(GameData.remotePlayers.indexOf(player), 1);
       };
 
       game.socket.on('disconnect', function(playerData) {
         removeRemotePlayer(playerData);
-        game.scope.$emit('game:removePlayer',playerData);
+        game.scope.$emit('game:removePlayer', playerData);
       });
 
-      game.socket.on('kill',removeRemotePlayer);
+      game.socket.on('kill', removeRemotePlayer);
     },
 
     remoteBulletsShotSocketUpdate: function() {
@@ -123,7 +125,6 @@ var play = function(GameData) {
       var game = this.game;
 
       game.socket.on('gameUpdated:add', function(data) {
-
         var allPlayers = data.allPlayers;
         var newPlayers = [];
         var playerData;
@@ -148,16 +149,13 @@ var play = function(GameData) {
       this.game.socket.emit('updatePlayer', {
         x: this.mainPlayer.body.x,
         y: this.mainPlayer.body.y,
-        velocity: {
-          x: this.mainPlayer.body.velocity.x,
-          y: this.mainPlayer.body.velocity.y
-        },
         orientation: this.mainPlayer.orientation,
         xScale: this.mainPlayer.scale.x,
         health: this.mainPlayer.health,
+        kills: this.mainPlayer.kills,
         timestamp: new Date().getTime()
       });
-      this.playerDataSocketUpdates = this.game.time.events.add(50,this.playerDataSocketUpdate.bind(this));
+      this.playerDataSocketUpdates = this.game.time.events.add(50, this.playerDataSocketUpdate.bind(this));
     },
 
     updatePlayerDatafromServer: function(player, serverData) {
@@ -182,7 +180,7 @@ var play = function(GameData) {
           if ( playerData.id !== GameData.socket.id ) {
             player = GameData.getRemotePlayerById(playerData.id);
             if (player) {
-              this.updatePlayerDatafromServer(player,playerData);
+              this.updatePlayerDatafromServer(player, playerData);
             }
           }
         }
@@ -239,7 +237,7 @@ var play = function(GameData) {
       var id = mainPlayer.id;
       var name = GameData.playerName;
 
-      this.game.socket.emit('playerKilled',id);
+      this.game.socket.emit('playerKilled', id);
       mainPlayer.kill();
 
       var startPos = this.generatePosition();
@@ -253,18 +251,18 @@ var play = function(GameData) {
       };
 
       this.mainPlayer = this.initPlayer(config);
-      this.game.socket.emit('newPlayer',config);
+      this.game.socket.emit('newPlayer', config);
       GameData.mainPlayer = this.mainPlayer;
       this.game.scope.$emit('game:healthChange', this.mainPlayer.health);
 
       this.camera.follow(this.mainPlayer);
     },
 
-    damagePlayer: function(mainPlayer,remoteBullet) {
+    damagePlayer: function(mainPlayer, remoteBullet) {
       this.game.scope.$emit('game:healthChange', mainPlayer.health-= 20);
       this.playExplosion(mainPlayer);
       if( mainPlayer.health === 0 ) {
-        this.game.socket.emit('playerScored',remoteBullet.id);
+        this.game.socket.emit('playerScored', remoteBullet.id);
         this.killPlayer(mainPlayer);
       }
       remoteBullet.kill();
@@ -337,11 +335,7 @@ var play = function(GameData) {
       this.game.socket.emit('shotBullet', {
         id: this.game.socket.id,
         y: bullet.y,
-        x: bullet.x,
-        velocity: {
-          x: bullet.body.velocity.x,
-          y: bullet.body.velocity.y
-        }
+        x: bullet.x
       });
     },
 

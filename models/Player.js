@@ -10,24 +10,14 @@ var Player = function(opts) {
 
   this.x = opts.x || null;
   this.y = opts.y || null;
+
   this.kills = opts.kills || 0;
 
-  this.velocity = {
-    x: 0,
-    y: 0
-  };
-
   this.timestamp = 0;
-  this.health = 100;
-  this.lastShot = {};
 };
 
 Player.prototype.recordUpdate = function(data) {
   _.assign(this, data);
-};
-
-Player.prototype.recordShot = function(data) {
-  this.lastShot = data;
 };
 
 module.exports = Player;
