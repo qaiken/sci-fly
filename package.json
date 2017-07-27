@@ -4,7 +4,7 @@
   "description": "multiplayer game built with phaser,angular,node,express,socketio",
   "main": "server.js",
   "engines": {
-    "node": "0.12.4"
+    "node": "8.1.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
